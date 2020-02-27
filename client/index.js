@@ -1,10 +1,6 @@
 // validate date
 document.getElementById('dateInp').min = new Date().toISOString().split("T")[0];
 
-// Display events
-
-
-
 // Search functionality
 var searchButton = document.getElementById("search");
 searchButton.addEventListener('click', async function(event){
@@ -34,20 +30,35 @@ function searchResults(key, msg){
     content.appendChild(heading);
 }
 
-function signup(){
+var currentUser = null;
 
+function signup(){
+    console.log('signup');
+    var data = getFormData('login');
+    data.from = 'signup';
+    sendPostReq(data);
+    event.preventDefault();
 }
 
 // submit form
 function submitForm(formName){
-    data = getFormData(formName);
+    var data = getFormData(formName);
+    var resp = sendPostReq(data);
+    event.preventDefault();
+}
+
+function sendPostReq(data){
     var req = new XMLHttpRequest();
     var url = 'http://localhost:8000/'
     req.open("POST", url, true);
     req.setRequestHeader("Content-Type", "application/json")
     req.send(JSON.stringify(data));
-    displayAlert('content', 'Form Submitted!');
-    event.preventDefault();
+    req.onreadystatechange = function(){
+        if (req.readyState == 4 && req.status == 200){
+            displayAlert('content', req.responseText);
+            return req.responseText
+        }
+    }
 }
 
 // multi purpose functions
