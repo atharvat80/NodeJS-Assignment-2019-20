@@ -14,13 +14,13 @@ const EventSchema = new Schema({
 		type: String,
 		required: true
 	},
+	createdBy:{
+		type: String,
+		default: 'Unknown'
+	},
 	details:{
 		type: String,
 		required: true
-	},
-	createdBy:{
-		type: String,
-		default: 'admin'
 	}
 });
 

@@ -1,67 +1,90 @@
+// index.js
+var currentUser = null;
+
 // validate date
 document.getElementById('dateInp').min = new Date().toISOString().split("T")[0];
 
 // Search functionality
-var searchButton = document.getElementById("search");
-searchButton.addEventListener('click', async function(event){
-    var keyInp = document.getElementById("searchKey").value;
-	try{
-		let response = await fetch('http://localhost:8000/search?key='+keyInp);
-		if (response.ok == false) throw ('Error 404');
-		let body = await response.text();
-		searchResults(keyInp, body);
-	} catch(e) {
-		displayAlert('content', e);
-	}
-});
+function search() {
+    var data = getFormData('searchForm');
+    sendPostReq('http://localhost:8000/search', data);
+    searchResults(postResp);
+    event.preventDefault();
+}
 
-function searchResults(key, msg){
+function searchResults(msg){
     var heading = document.createElement('h3');
-    var homeBtn = document.createElement('button');
+    var backBtn = document.createElement('button');
     var content = document.getElementById('content');
     heading.setAttribute('class', 'my-4 d-inline-block align-middle');
-    heading.innerHTML = "Search results for "+'"'+key+'"';
-    homeBtn.setAttribute('class', 'btn btn-outline-danger');
-    homeBtn.setAttribute('id', 'backBtn');
-    homeBtn.setAttribute('style', 'margin-right:20px')
-    homeBtn.innerHTML = '‹ Back';
+    heading.innerHTML = "Search results";
+    backBtn.setAttribute('class', 'btn btn-outline-danger');
+    backBtn.setAttribute('id', 'backBtn');
+    backBtn.setAttribute('style', 'margin-right:20px')
+    backBtn.setAttribute('onclick', 'back()')
+    backBtn.innerHTML = '‹ Back';
     content.innerHTML = '';
-    content.appendChild(homeBtn);
+    content.appendChild(backBtn);
     content.appendChild(heading);
 }
 
-var currentUser = null;
+function back(){
+    var content = document.getElementById('content');
+}
 
 function signup(){
-    console.log('signup');
     var data = getFormData('login');
     data.from = 'signup';
-    sendPostReq(data);
+    sendPostReq('http://localhost:8000/auth',data);
+    $('#loginForm').modal('hide')
     event.preventDefault();
 }
 
 // submit form
 function submitForm(formName){
-    var data = getFormData(formName);
-    var resp = sendPostReq(data);
+    var url = 'http://localhost:8000/auth'
+    if (formName === 'createEvent' && currentUser === null){
+        displayAlert('Please login or create a new account to create a new event')
+    }
+    else{
+        var data = getFormData(formName);
+        if (formName === 'createEvent'){
+            data.createdBy = currentUser;
+            url = 'http://localhost:8000/newEvent';
+        }
+        sendPostReq(url, data);
+    }
+    $('#loginForm').modal('hide');
     event.preventDefault();
 }
 
-function sendPostReq(data){
+function sendPostReq(url, data){
     var req = new XMLHttpRequest();
-    var url = 'http://localhost:8000/'
     req.open("POST", url, true);
     req.setRequestHeader("Content-Type", "application/json")
     req.send(JSON.stringify(data));
     req.onreadystatechange = function(){
         if (req.readyState == 4 && req.status == 200){
-            displayAlert('content', req.responseText);
-            return req.responseText
+            if (req.responseText.includes('Welcome') === true){
+                currentUser = data.uName;
+                displayUName();
+                displayAlert(req.responseText);
+            }
+            callback(req.responseText);
         }
     }
 }
 
 // multi purpose functions
+
+function displayUName(){
+    var text = document.getElementById('navUName')
+    if (currentUser != null){
+        document.getElementById('loginButton').setAttribute('style',"display:none");
+        text.setAttribute('style', 'color: white')
+        text.innerHTML = 'Logged in as '+currentUser
+    }
+}
 
 function getFormData(formID){
     // get form data
@@ -76,21 +99,20 @@ function getFormData(formID){
     return data
 }
 
-function displayAlert(target, msg){
-    var content = document.getElementById(target);
-    var div = document.createElement('div');
-    var closeBtn = document.createElement('button');
-    var span = document.createElement('span');
-    div.setAttribute('class', 'alert alert-primary alert-dismissible fade show');
-    div.setAttribute('role', 'alert');
-    div.setAttribute('style', 'margin-top: 24px; margin-bottom: 24px; font-weight:bold');
-    closeBtn.setAttribute('class', 'close');
-    closeBtn.setAttribute('data-dismiss', 'alert');
-    closeBtn.setAttribute('aria-label', 'Close');
-    span.setAttribute('aria-hidden', 'true');
-    span.innerHTML = "&times;";
-    div.innerHTML += msg;
-    closeBtn.appendChild(span);
-    div.appendChild(closeBtn);
-    content.insertBefore(div, content.childNodes[0]);
+function closeAlert(){
+    var card = document.getElementById('showMsg');
+    var close = document.getElementById('closeAlert');
+    card.innerHTML = '';
+    card.appendChild(close);
+    card.removeAttribute("style")
+    card.setAttribute("style","display:none");
+}
+
+function displayAlert(msg){
+    var card = document.getElementById('showMsg');
+    var close = document.getElementById('closeAlert');
+    card.innerHTML = msg;
+    card.appendChild(close);
+    card.removeAttribute("style")
+    card.setAttribute("style","font-weight: bold; margin-top: 24px");
 }

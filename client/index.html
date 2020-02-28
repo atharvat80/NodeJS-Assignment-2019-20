@@ -20,12 +20,15 @@
   <!-- Navigation -->
 	<nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
 		<div class="container">
-			<a class="navbar-brand" href="">
-			<img src="./media/logo.svg" alt="" height="30" width="27"/>
-			Stephenson College Events
+			<a class="navbar-brand" style="color: white;">
+				<img src="./media/logo.svg" alt="" height="30" width="27"/>
+				Stephenson College Events
 			</a>
+			<a  id="navUName" class= 'nav-item' style='color:white; visibility: hidden'></a> 
+			<button id='loginButton' type="button" id="details" class="btn btn-danger" data-toggle="modal" data-target="#loginForm">
+				Login
+			</button>
 		</div>
-
 	</nav>
 
 	<!-- Page Content -->
@@ -40,6 +43,10 @@
 				<div class="spinner-border m-5" role="status"></div>
 			</div> -->
 
+			<div id='showMsg' class="alert alert-primary" style="display: none;">
+				<button id='closeAlert' class="close" onclick="closeAlert()">×</button>
+			</div>
+
 			<div class="card" style="margin-top: 24px; margin-bottom: 24px">
 				<div class="card-body">
 				<h5 class="card-title">Event title</h5>
@@ -47,109 +54,116 @@
 				<button type="button" id="details" class="btn btn-danger" data-toggle="modal" data-target="#eventDetail">
 					Details
 				</button>
-				</div>
 			</div>
 			
 			<!-- Button trigger modal -->
-			<div class="modal fade" id="eventDetail" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+			<div class="modal fade" id="eventDetail" tabindex="-1" role="dialog" aria-labelledby="eventModal" aria-hidden="true">
 				<div class="modal-dialog modal-dialog-centered" role="document">
-				<div class="modal-content">
-					<div class="modal-header">
-						<h5 class="modal-title" id="eventModalLabel">Event Name</h5>
-						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-							<span aria-hidden="true">&times;</span>
-						</button>
-					</div>
+					<div class="modal-content">
+						<div class="modal-header">
+							<h5 class="modal-title" id="eventModalLabel">Event Name</h5>
+							<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+								<span aria-hidden="true">&times;</span>
+							</button>
+						</div>
 						<div class="modal-body">
 						<p id= date>Date:</p>
 						<p id= date>Time:</p>
 						<p id= date>Location:</p>
 						<p id= date>Posted by:</p>
 						<p id= date>Description:</p>
-					</div>
-					<div class="modal-footer">
-						<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-warning">I'll be there!</button>
+							<button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+						</div>
 					</div>
 				</div>
+			</div>
+
+			<div class="modal fade" id="loginForm" tabindex="-1" role="dialog" aria-labelledby="loginModal" aria-hidden="true">
+				<div class="modal-dialog modal-sm modal-dialog-centered" role="document">
+					<div class="modal-content">
+						<div class="modal-header">
+							<!-- <h5 class="modal-title" id="eventModalLabel">Login/Signup</h5> -->
+							<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+								<span aria-hidden="true">&times;</span>
+							</button>
+						</div>
+						<div class="modal-body">
+							<form id='login' onsubmit="submitForm('login')">
+								<div class="form-group">
+									<label for="uName">Username</label>
+									<input type="text" class="form-control" name="uName" placeholder="Username" required>
+								</div>
+								<div class="form-group">
+									<label for="pass">Password</label>
+									<input type="password" class="form-control" name="pass" placeholder="Password" required>
+								</div>
+								<button type="submit" class="btn btn-danger">Login</button>
+								<button onclick="signup()" class="btn btn-outline-danger">Sign up</button>
+							</form>
+						</div>
+						</div>
+					</div>
 				</div>
 			</div>
 		</div>
 
 		<!-- Sidebar Widgets Column -->
 		<div class="col-md-4">
-			<div class="accordion" id='accordion' style="margin-top: 24px;">
-				<div class="card">
-					<h5 class="card-header">
-						<button class="btn" type="button" data-toggle="collapse" data-target="#collapse1" aria-expanded="true" aria-controls="collapseOne">
-						Login
-						</button>
-					</h5>
-					<div id="collapse1" class="card-body collapse" aria-labelledby="headingOne" data-parent="#accordion">
-						<form id='login' onsubmit="submitForm('login')">
-							<div class="form-group">
-								<label for="uName">Username</label>
-								<input type="text" class="form-control" name="uName" placeholder="Username" required>
-							</div>
-							<div class="form-group">
-								<label for="pass">Password</label>
-								<input type="password" class="form-control" name="pass" placeholder="Password" required>
-							</div>
-							<button type="submit" class="btn btn-danger">Login</button>
-							<button onclick="signup()" class="btn btn-outline-danger">Sign up</button>
-						</form>
-					</div>
-				</div>
-				<div class="card">
-					<h5 class="card-header">
-						<button class="btn" type="button" data-toggle="collapse" data-target="#collapse0" aria-expanded="true" aria-controls="collapseOne">
-						Search
-						</button>
-					</h5>
-					<div id="collapse0" class="card-body collapse show" aria-labelledby="headingOne" data-parent="#accordion">
-						<div class="input-group">
-							<input type="text" id="searchKey" class="form-control" placeholder="Some event...">
-							<span class="input-group-btn">
-							<button class="btn btn-danger" id="search" type="button">Go</button>
-							</span>
+			<div class="card" style="margin-top: 24px;">
+				<h5 class="card-header">Search</h5>
+				<div class= "card-body">
+					<form onsubmit="search()" id="searchForm">
+						<div class="form-group">
+							<label>Criteria</label>
+							<select class="form-control" name='criteria'>
+								<option value='byName'>Title</option>
+								<option value='byDate'>Date</option>
+								<option value='byLocation'>Location</option>
+								<option value='byPerson'>Created by</option>
+							</select>
 						</div>
-					</div>
+						<div class="form-group">
+							<label>Keyword(s)</label>
+							<input name="key" type="text" class="form-control" placeholder='Search for...' required>
+						</div>
+						<button type="submit" class="btn btn-danger">Search</button>
+					</form>
 				</div>
-				<div class="card">
-					<h5 class="card-header">
-						<button class="btn" type="button" data-toggle="collapse" data-target="#collapse2" aria-expanded="true" aria-controls="collapseOne">
-						Create a new event
-						</button>
-					</h5>
-					<div id="collapse2" class="card-body collapse show" aria-labelledby="headingOne" data-parent="#accordion">
-						<form onsubmit="submitForm('createEvent')" id="createEvent">
-							<div class="form-group">
-								<label for="nameInp">Name</label>
-								<input name="nameInp" type="text" class="form-control" placeholder='Event Name' required>
-							</div>
-							<div class="form-group">
-								<label for="dateInp">Date</label>
-								<input id='dateInp' name="dateInp" type="date" class="form-control" required>     
-							</div>
-							<div class="form-group">
-								<label for="timeInp">Time</label>
-								<input name="timeInp" type="time" class="form-control" required> 
-								<small class="form-text text-muted">Please use 24HR format unless prompted by your browser</small>    
-							</div>
-							<div class="form-group">
-								<label for="locInp">Location</label>
-								<input name="locInp" type="text" class="form-control" placeholder='Location' required>
-							</div>
-							<div class="form-group">
-								<label for="detailsInp">Details</label>
-								<textarea name="detailsInp" class="form-control" rows="3" placeholder="e.g. details, dress code, entry fees..."></textarea>
-							</div>
-							<div class="form-check" style="margin-top: 10px; margin-bottom: 10px;">
-								<input type="checkbox" class="form-check-input" id="exampleCheck1" required>
-								<label class="form-check-label" for="exampleCheck1">Confirm above details are correct</label>
-							</div>
-							<button type="submit" class="btn btn-danger">Submit</button>
-						</form>
-					</div>
+			</div>
+			<div class="card" style="margin-top: 20px;">
+				<h5 class="card-header">Create a new event</h5>
+				<div class="card-body">
+					<form onsubmit="submitForm('createEvent')" id="createEvent">
+						<div class="form-group">
+							<label for="nameInp">Name</label>
+							<input name="nameInp" type="text" class="form-control" placeholder='Event Name' required>
+						</div>
+						<div class="form-group">
+							<label for="dateInp">Date</label>
+							<input id='dateInp' name="dateInp" type="date" class="form-control" required>     
+						</div>
+						<div class="form-group">
+							<label for="timeInp">Time</label>
+							<input name="timeInp" type="time" class="form-control" required> 
+							<small class="form-text text-muted">Please use 24HR format unless prompted by your browser</small>    
+						</div>
+						<div class="form-group">
+							<label for="locInp">Location</label>
+							<input name="locInp" type="text" class="form-control" placeholder='Location' required>
+						</div>
+						<div class="form-group">
+							<label for="detailsInp">Details</label>
+							<textarea name="detailsInp" class="form-control" rows="3" placeholder="e.g. highlights, dress code, entry fees..."></textarea>
+						</div>
+						<div class="form-check" style="margin-bottom: 10px;">
+							<input type="checkbox" class="form-check-input" id="exampleCheck1" required>
+							<label class="form-check-label" for="exampleCheck1">Above details are correct</label>
+						</div>
+						<button type="submit" class="btn btn-danger">Submit</button>
+					</form>
 				</div>
 			</div>
 		</div>
@@ -174,3 +188,4 @@
 </body>
 
 </html>
+

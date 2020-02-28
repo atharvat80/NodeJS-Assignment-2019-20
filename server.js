@@ -15,7 +15,7 @@ app.get('/', (req, resp)=>{
     resp.sendFile('client/index.html')
 })
 
-app.post('/', (req, resp)=>{
+app.post('/auth', (req, resp)=>{
     if (req.body.from === 'login'){
         var result = auth.login(req);
         if (result === true){
@@ -31,16 +31,19 @@ app.post('/', (req, resp)=>{
         }
         else{
             resp.send("That username is already taken :(")
-        }   
-    }
-    else{
-        resp.send('Event Created!')
-        console.log('call create new function')
-    }
+        }
+    } else {
+        resp.send("Server didn't recognise that request.")
+    } 
 })
 
-app.get('/search', (req, resp)=>{
-    resp.send("Searching for "+req.query.key)
+app.post('/newEvent', (req,resp)=>{
+        resp.send('Event Created!')
+        console.log('call create new function')
+})
+
+app.post('/search', (req, resp)=>{
+    resp.send("Searching for "+req.body.key)
 })
 
 // app
@@ -54,4 +57,4 @@ app.get('/search', (req, resp)=>{
 //   .put(eventController.updateEvent)
 //   .delete(eventController.deleteEvent);
 
-app.listen(8000)
+app.listen(8000);
