@@ -24,7 +24,7 @@
 				<img src="./media/logo.svg" alt="" height="30" width="27"/>
 				Stephenson College Events
 			</a>
-			<a  id="navUName" class= 'nav-item' style='color:white; visibility: hidden'></a> 
+			<a  id="navUName" class= 'nav-item' style='color:white; visibility: hidden'></a>
 			<button id='loginButton' type="button" id="details" class="btn btn-danger" data-toggle="modal" data-target="#loginForm">
 				Login
 			</button>
@@ -35,25 +35,34 @@
 	<div class="container">
 
 	<div class="row">
-
 		<!-- Event Entries Column -->
 		<div class="col-md-8" id="content">
-
-			<!-- <div class="text-center">
-				<div class="spinner-border m-5" role="status"></div>
-			</div> -->
-
 			<div id='showMsg' class="alert alert-primary" style="display: none;">
 				<button id='closeAlert' class="close" onclick="closeAlert()">×</button>
 			</div>
-
-			<div class="card" style="margin-top: 24px; margin-bottom: 24px">
-				<div class="card-body">
-				<h5 class="card-title">Event title</h5>
-				<h6 class="card-subtitle mb-2 text-muted">Date, Time, Location</h6>
-				<button type="button" id="details" class="btn btn-danger" data-toggle="modal" data-target="#eventDetail">
-					Details
-				</button>
+			
+			<div id='loading' class="text-center" style="display: none;">
+				<div class="spinner-border m-5" role="status"></div>
+			</div>
+			
+			<div id="home">
+				<div id='templateCard' class="card" style="margin-top: 24px; margin-bottom: 24px; display: none;">
+					<div class="card-body">
+						<h5 class="card-title"></h5>
+						<span class="badge badge-primary"></span>
+						<span class="badge badge-secondary"></span>
+						<span class="badge badge-info"></span>
+						<p class="card-text" style='margin-top: 5px; margin-bottom: 2px;'></p>
+						<p class="card-text" style='margin-top: 0px'></p>
+						<button type="button" class="btn btn-warning btn-sm">I'll be there!</button>
+						<!-- <button type="button" id="details" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#eventDetail">Details</button> -->
+					</div>
+				</div>
+			</div>
+			
+			<div id="searchResults" style="display: none;">
+				<button class='btn btn-outline-danger btn-sm' style='margin-right:20px' onclick="back()">Home</button>
+				<h5 class='my-4 d-inline-block align-middle'>Search results</h5>
 			</div>
 			
 			<!-- Button trigger modal -->
@@ -74,8 +83,8 @@
 						<p id= date>Description:</p>
 						</div>
 						<div class="modal-footer">
-							<button type="button" class="btn btn-warning">I'll be there!</button>
-							<button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+							<button type="button" class="btn btn-warning btn-sm">I'll be there!</button>
+							<button type="button" class="btn btn-danger btn-sm" data-dismiss="modal">Close</button>
 						</div>
 					</div>
 				</div>
@@ -106,12 +115,13 @@
 						</div>
 						</div>
 					</div>
-				</div>
 			</div>
+		
 		</div>
 
 		<!-- Sidebar Widgets Column -->
 		<div class="col-md-4">
+			
 			<div class="card" style="margin-top: 24px;">
 				<h5 class="card-header">Search</h5>
 				<div class= "card-body">
@@ -119,20 +129,21 @@
 						<div class="form-group">
 							<label>Criteria</label>
 							<select class="form-control" name='criteria'>
-								<option value='byName'>Title</option>
-								<option value='byDate'>Date</option>
-								<option value='byLocation'>Location</option>
-								<option value='byPerson'>Created by</option>
+								<option value='name'>Title</option>
+								<option value='date'>Date (YYYY-MM-DD)</option>
+								<option value='location'>Location</option>
+								<option value='person'>Created by</option>
 							</select>
 						</div>
 						<div class="form-group">
 							<label>Keyword(s)</label>
 							<input name="key" type="text" class="form-control" placeholder='Search for...' required>
 						</div>
-						<button type="submit" class="btn btn-danger">Search</button>
+						<button type="submit" class="btn btn-danger btn-sm">Search</button>
 					</form>
 				</div>
 			</div>
+			
 			<div class="card" style="margin-top: 20px;">
 				<h5 class="card-header">Create a new event</h5>
 				<div class="card-body">
@@ -162,10 +173,11 @@
 							<input type="checkbox" class="form-check-input" id="exampleCheck1" required>
 							<label class="form-check-label" for="exampleCheck1">Above details are correct</label>
 						</div>
-						<button type="submit" class="btn btn-danger">Submit</button>
+						<button type="submit" class="btn btn-danger btn-sm">Submit</button>
 					</form>
 				</div>
 			</div>
+		
 		</div>
 
 	</div>
@@ -182,7 +194,7 @@
 	</footer>
 
 	<script src="vendor/jquery/jquery.min.js"></script>
-  	<script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+  <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 	<script src="index.js"></script>
 
 </body>

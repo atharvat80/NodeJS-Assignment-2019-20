@@ -5,13 +5,13 @@
  */
 body {
   padding-top: 56px;
-  padding-bottom: 70px;
+  padding-bottom: 80px;
   height: 100%;
 }
 
 footer {
   position: fixed;
-  height: 50px;
+  height: 60px;
   bottom: 0px;
   left: 0px;
   right: 0px;

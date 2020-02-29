@@ -1,20 +1,22 @@
 const express = require('express');
 const bodyParser = require('body-parser');
+const auth = require('./authenticate');
+const eventController = require('./database/eventController');
 const app = express();
+
 
 app.use(express.static('client'));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
 // connect to MongoDB
-// require('./database/db')
-const auth = require('./authenticate');
+require('./database/db')
 
-// Home page display events
-app.get('/', (req, resp)=>{
-    resp.sendFile('client/index.html')
-})
+// GET requests
+app.get('/', (req, resp)=>{resp.sendFile('client/index.html')}) // Send home page
+app.get('/events', eventController.listAllEvents) // Send all events
 
+// POST requests
 app.post('/auth', (req, resp)=>{
     if (req.body.from === 'login'){
         var result = auth.login(req);
@@ -37,24 +39,8 @@ app.post('/auth', (req, resp)=>{
     } 
 })
 
-app.post('/newEvent', (req,resp)=>{
-        resp.send('Event Created!')
-        console.log('call create new function')
-})
+app.post('/newEvent', eventController.createNewEvent);
+app.post('/search', eventController.findEvent);
 
-app.post('/search', (req, resp)=>{
-    resp.send("Searching for "+req.body.key)
-})
-
-// app
-//   .route("/events")
-//   .get(eventController.listAllEvents)
-//   .post(eventController.createNewEvent);
-
-// app
-//   .route("/events/:eventid")
-//   .get(eventController.readEvent)
-//   .put(eventController.updateEvent)
-//   .delete(eventController.deleteEvent);
-
+// listen for requests
 app.listen(8000);

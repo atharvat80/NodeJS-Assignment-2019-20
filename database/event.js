@@ -6,8 +6,12 @@ const EventSchema = new Schema({
 		type: String,
 		required: true
 	},
-	dateTime:{
-		type: Date,
+	date:{
+		type: String,
+		required: true
+	},
+	time:{
+		type: String,
 		required: true
 	},
 	location:{
@@ -20,8 +24,12 @@ const EventSchema = new Schema({
 	},
 	details:{
 		type: String,
-		required: true
-	}
+		default: 'No details provided'
+	},
+	attending:{
+		type: Number,
+		default: 1
+	}	
 });
 
 module.exports = mongoose.model("event", EventSchema);

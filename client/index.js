@@ -4,32 +4,50 @@ var currentUser = null;
 // validate date
 document.getElementById('dateInp').min = new Date().toISOString().split("T")[0];
 
+// Fetch and display events
+async function getEvents(){
+    document.getElementById('loading').removeAttribute('style');
+    try{
+        let res = await fetch('http://localhost:8000/events');
+        let json = await res.json();
+		if (res.ok == false) throw ('Error 404');
+		displayEvents(json);
+	} catch(e) {
+		displayAlert(e)
+	}
+}
+
+getEvents();
+
+function displayEvents(events){
+    document.getElementById('loading').setAttribute('style', 'display: none');
+    for(i=0; i < events.length; i++){
+        var cln = document.getElementById('templateCard').cloneNode(true);
+        cln.setAttribute('style', 'margin-top: 24px');
+        cln.setAttribute('id', events[i]._id);
+        console.log(cln);
+        cln.childNodes[1].childNodes[1].innerHTML = events[i].name;
+        cln.childNodes[1].childNodes[3].innerHTML = events[i].date;
+        cln.childNodes[1].childNodes[5].innerHTML = events[i].time;
+        cln.childNodes[1].childNodes[7].innerHTML = events[i].location;
+        cln.childNodes[1].childNodes[9].innerHTML = 'Created by <strong>'+events[i].createdBy+'</strong>';
+        cln.childNodes[1].childNodes[11].innerHTML = events[i].details;
+        document.getElementById("home").appendChild(cln);
+    }   
+}
+
 // Search functionality
 function search() {
     var data = getFormData('searchForm');
     sendPostReq('http://localhost:8000/search', data);
-    searchResults(postResp);
+    document.getElementById('home').setAttribute('style', 'display:none');
+    document.getElementById('searchResults').removeAttribute('style');
     event.preventDefault();
 }
 
-function searchResults(msg){
-    var heading = document.createElement('h3');
-    var backBtn = document.createElement('button');
-    var content = document.getElementById('content');
-    heading.setAttribute('class', 'my-4 d-inline-block align-middle');
-    heading.innerHTML = "Search results";
-    backBtn.setAttribute('class', 'btn btn-outline-danger');
-    backBtn.setAttribute('id', 'backBtn');
-    backBtn.setAttribute('style', 'margin-right:20px')
-    backBtn.setAttribute('onclick', 'back()')
-    backBtn.innerHTML = '‹ Back';
-    content.innerHTML = '';
-    content.appendChild(backBtn);
-    content.appendChild(heading);
-}
-
 function back(){
-    var content = document.getElementById('content');
+    document.getElementById('searchResults').setAttribute('style', 'display:none');
+    document.getElementById('home').removeAttribute('style')
 }
 
 function signup(){
@@ -51,8 +69,10 @@ function submitForm(formName){
         if (formName === 'createEvent'){
             data.createdBy = currentUser;
             url = 'http://localhost:8000/newEvent';
-        }
-        sendPostReq(url, data);
+            sendPostReq(url, data);
+        } else {
+            sendPostReq(url, data);
+        }   
     }
     $('#loginForm').modal('hide');
     event.preventDefault();
@@ -70,7 +90,6 @@ function sendPostReq(url, data){
                 displayUName();
                 displayAlert(req.responseText);
             }
-            callback(req.responseText);
         }
     }
 }
