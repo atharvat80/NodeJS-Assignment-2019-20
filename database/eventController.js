@@ -29,19 +29,6 @@ exports.createNewEvent = (req, res) => {
 	});
 };
 
-exports.findEvent = (req, res) => {
-	console.log('search request')
-	// var field = req.body.criteria;
-	// if (field === 'location'){
-	// 	Event.find({name: req.body.key}, (err, event) => {
-	// 		if (err) {
-	// 			res.status(500).send(err);
-	// 		}
-	// 			res.status(200).json(event);
-	// 	});	
-	// }
-};
-
 exports.updateEvent = (req, res) => {
 	Event.findByIdAndUpdate(
 		{ _id: req.body._id},
@@ -63,12 +50,3 @@ exports.updateEvent = (req, res) => {
 		}
 	);
 };
-
-// exports.deleteEvent = (req, res) => {
-// 	Event.remove({ _id: req.params.eventid }, (err, event) => {
-// 	if (err) {
-// 		res.status(404).send(err);
-// 	}
-// 	res.status(200).json({ message: "Event successfully deleted" });
-// 	});
-// };

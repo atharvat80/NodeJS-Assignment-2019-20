@@ -38,7 +38,6 @@ app.post('/newUser', (req, resp)=>{
 })
 
 app.post('/newEvent', eventController.createNewEvent);
-app.post('/search', eventController.findEvent);
 
 // listen for requests
 app.listen(8000);
