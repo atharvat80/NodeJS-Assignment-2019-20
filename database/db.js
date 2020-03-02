@@ -6,7 +6,7 @@ const options = {
 };
 
 mongoose.connect(dbURI, options).then(
-    () => {console.log("Database connection established!");},
+    () => {console.log("");},
     err => {console.log("Error connecting Database instance due to: ", err);}
 );
 

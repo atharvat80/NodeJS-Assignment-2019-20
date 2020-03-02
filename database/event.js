@@ -27,8 +27,7 @@ const EventSchema = new Schema({
 		default: 'No details provided'
 	},
 	attending:{
-		type: Number,
-		default: 1
+		type: String,
 	}	
 });
 

@@ -2,7 +2,7 @@ const Event = require("./event");
 
 exports.listAllEvents = (req, res) => {
 	var today = new Date().toISOString().split("T")[0];
-	Event.find({date: {$gt: today}}, (err, event) => {
+	Event.find({date: {$gt: today}}, null, {sort: {date: 1}}, (err, event) => {
 	if (err) {
 		res.status(500).send(err);
 	}
@@ -18,6 +18,7 @@ exports.createNewEvent = (req, res) => {
 		location: req.body.locInp,
 		createdBy: req.body.createdBy,
 		details: req.body.detailsInp,
+		attending: req.body.createdBy
 	}
 	let newEvent = new Event(newEventInfo);
 	newEvent.save((err, event) => {
@@ -41,19 +42,27 @@ exports.findEvent = (req, res) => {
 	// }
 };
 
-// exports.updateEvent = (req, res) => {
-// 	Event.findOneAndUpdate(
-// 	{ _id: req.params.eventid },
-// 	req.body,
-// 	{ new: true },
-// 	(err, event) => {
-// 		if (err) {
-// 		res.status(500).send(err);
-// 		}
-// 		res.status(200).json(event);
-// 	}
-// 	);
-// };
+exports.updateEvent = (req, res) => {
+	Event.findByIdAndUpdate(
+		{ _id: req.body._id},
+		{
+			name: req.body.name,
+			date: req.body.date,
+			time: req.body.time,
+			location: req.body.location,
+			createdBy: req.body.createdBy,
+			details: req.body.details,
+			attending: req.body.attending+','+req.body.currentUser,
+		},
+		function(err, result) {
+			if (err) {
+				res.send(err);
+			} else {
+				res.send('Your attendance has been recorded.');
+			}
+		}
+	);
+};
 
 // exports.deleteEvent = (req, res) => {
 // 	Event.remove({ _id: req.params.eventid }, (err, event) => {

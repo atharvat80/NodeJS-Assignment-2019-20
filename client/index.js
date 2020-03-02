@@ -1,6 +1,6 @@
 // index.js
 var currentUser = null;
-
+var Events;
 // validate date
 document.getElementById('dateInp').min = new Date().toISOString().split("T")[0];
 
@@ -10,8 +10,9 @@ async function getEvents(){
     try{
         let res = await fetch('http://localhost:8000/events');
         let json = await res.json();
-		if (res.ok == false) throw ('Error 404');
-		displayEvents(json);
+        if (res.ok == false) throw ('Error 404');
+        Events = json;
+        displayEvents(json);
 	} catch(e) {
 		displayAlert(e)
 	}
@@ -23,15 +24,22 @@ function displayEvents(events){
     document.getElementById('loading').setAttribute('style', 'display: none');
     for(i=0; i < events.length; i++){
         var cln = document.getElementById('templateCard').cloneNode(true);
+        var attendees = events[i].attending.split(',');
         cln.setAttribute('style', 'margin-top: 24px');
         cln.setAttribute('id', events[i]._id);
-        console.log(cln);
         cln.childNodes[1].childNodes[1].innerHTML = events[i].name;
         cln.childNodes[1].childNodes[3].innerHTML = events[i].date;
         cln.childNodes[1].childNodes[5].innerHTML = events[i].time;
         cln.childNodes[1].childNodes[7].innerHTML = events[i].location;
-        cln.childNodes[1].childNodes[9].innerHTML = 'Created by <strong>'+events[i].createdBy+'</strong>';
-        cln.childNodes[1].childNodes[11].innerHTML = events[i].details;
+        cln.childNodes[1].childNodes[9].innerHTML = attendees.length + ' going';
+        cln.childNodes[1].childNodes[11].innerHTML = 'Created by <strong>'+events[i].createdBy+'</strong>';
+        cln.childNodes[1].childNodes[13].innerHTML = events[i].details;
+        if (attendees.includes(currentUser) === true){
+            disableBtn( cln.childNodes[1].childNodes[15]);
+        } else{
+            cln.childNodes[1].childNodes[15].setAttribute("value", i);
+            cln.childNodes[1].childNodes[15].setAttribute("onclick", "updateAttend(this)");
+        }
         document.getElementById("home").appendChild(cln);
     }   
 }
@@ -39,7 +47,7 @@ function displayEvents(events){
 // Search functionality
 function search() {
     var data = getFormData('searchForm');
-    sendPostReq('http://localhost:8000/search', data);
+    sendReq("POST", 'http://localhost:8000/search', data);
     document.getElementById('home').setAttribute('style', 'display:none');
     document.getElementById('searchResults').removeAttribute('style');
     event.preventDefault();
@@ -50,37 +58,68 @@ function back(){
     document.getElementById('home').removeAttribute('style')
 }
 
+// POST requests
 function signup(){
     var data = getFormData('login');
-    data.from = 'signup';
-    sendPostReq('http://localhost:8000/auth',data);
-    $('#loginForm').modal('hide')
+    sendReq("POST", 'http://localhost:8000/newUser',data);
     event.preventDefault();
 }
 
-// submit form
-function submitForm(formName){
-    var url = 'http://localhost:8000/auth'
-    if (formName === 'createEvent' && currentUser === null){
+function submitEvent(){
+    if (currentUser === null){
         displayAlert('Please login or create a new account to create a new event')
+    } else {
+        var data = getFormData('createEvent');
+        data.createdBy = currentUser;
+        sendReq("POST",'http://localhost:8000/newEvent', data);
+        var temp = document.getElementById('home').firstElementChild;
+        console.log( document.getElementById('home'));
+        document.getElementById('home').innerHTML = '';
+        document.getElementById('home').appendChild(temp);
+        getEvents();
     }
-    else{
-        var data = getFormData(formName);
-        if (formName === 'createEvent'){
-            data.createdBy = currentUser;
-            url = 'http://localhost:8000/newEvent';
-            sendPostReq(url, data);
-        } else {
-            sendPostReq(url, data);
-        }   
-    }
-    $('#loginForm').modal('hide');
     event.preventDefault();
 }
 
-function sendPostReq(url, data){
+function auth(){
+    // authenticate
+    var data = getFormData('login');
+    sendReq("POST",'http://localhost:8000/auth', data);
+    event.preventDefault();  
+}
+
+// update attendance
+function updateAttend(element){
+    if (currentUser === null){
+        displayAlert("Please sign in or create a new account to confirm your attendance.")
+    } else{
+        Events[element.value].currentUser = currentUser;
+        sendReq("PUT", 'http://localhost:8000/event', Events[element.value]);
+        var count = element.parentElement.childNodes[9];
+        count.innerHTML = parseInt(count.innerHTML[0])+1+' going';
+        disableAttending();
+    }
+}
+
+function disableAttending(){
+    for (i=0; i < Events.length; i++){
+        var userList = Events[i].attending.split(',');
+        if (userList.includes(currentUser) === true){
+            var eventCard = document.getElementById(Events[i]._id).childNodes[1].childNodes[15];
+            disableBtn(eventCard);
+        }
+    }
+}
+
+function disableBtn(btn){
+    btn.setAttribute('class', 'btn btn-success btn-sm float-right');
+    btn.innerHTML = "Attending";
+    btn.disabled = true;
+}
+
+function sendReq(type ,url, data){
     var req = new XMLHttpRequest();
-    req.open("POST", url, true);
+    req.open(type, url, true);
     req.setRequestHeader("Content-Type", "application/json")
     req.send(JSON.stringify(data));
     req.onreadystatechange = function(){
@@ -88,21 +127,21 @@ function sendPostReq(url, data){
             if (req.responseText.includes('Welcome') === true){
                 currentUser = data.uName;
                 displayUName();
-                displayAlert(req.responseText);
             }
+            displayAlert(req.responseText);
         }
     }
 }
 
 // multi purpose functions
-
 function displayUName(){
     var text = document.getElementById('navUName')
     if (currentUser != null){
-        document.getElementById('loginButton').setAttribute('style',"display:none");
+        document.getElementById('loginBtn').setAttribute('style',"display:none");
         text.setAttribute('style', 'color: white')
         text.innerHTML = 'Logged in as '+currentUser
     }
+    disableAttending();
 }
 
 function getFormData(formID){
@@ -133,5 +172,4 @@ function displayAlert(msg){
     card.innerHTML = msg;
     card.appendChild(close);
     card.removeAttribute("style")
-    card.setAttribute("style","font-weight: bold; margin-top: 24px");
 }
