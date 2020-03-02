@@ -32,7 +32,7 @@ function displayEvents(events){
         cln.childNodes[1].childNodes[5].innerHTML = events[i].time;
         cln.childNodes[1].childNodes[7].innerHTML = events[i].location;
         cln.childNodes[1].childNodes[9].innerHTML = attendees.length + ' going';
-        cln.childNodes[1].childNodes[13].innerHTML = 'Created by <strong>'+events[i].createdBy+'</strong>';
+        cln.childNodes[1].childNodes[13].innerHTML = 'Created by '+events[i].createdBy;
         cln.childNodes[1].childNodes[11].innerHTML = events[i].details;
         if (attendees.includes(currentUser) === true){
             disableBtn( cln.childNodes[1].childNodes[15]);
@@ -52,20 +52,26 @@ function search() {
     document.getElementById('searchLoading').removeAttribute('style');
     document.getElementById('heading').innerHTML = "Search results for "+'"'+data.key+'"';
     document.getElementById('results').innerHTML = "";
+    var results = 0;
     for (i=0; i < Events.length; i++){
         var current = Events[i][data.criteria].toLowerCase();
         data.key = data.key.toLowerCase();
         if (current.includes(data.key) === true){
+            results += 1;
             var match = document.getElementById(Events[i]._id).cloneNode(true);
             document.getElementById('results').appendChild(match);
         }
     }
     document.getElementById('searchLoading').setAttribute('style', 'display:none');
+    if (results === 0){
+        document.getElementById('noResult').removeAttribute('style');
+    }
     event.preventDefault();
 }
 
 function back(){
     document.getElementById('searchResults').setAttribute('style', 'display:none');
+    document.getElementById('noResult').setAttribute('style', 'display:none');
     document.getElementById('home').removeAttribute('style')
 }
 
