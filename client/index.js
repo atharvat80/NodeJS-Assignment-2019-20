@@ -32,8 +32,8 @@ function displayEvents(events){
         cln.childNodes[1].childNodes[5].innerHTML = events[i].time;
         cln.childNodes[1].childNodes[7].innerHTML = events[i].location;
         cln.childNodes[1].childNodes[9].innerHTML = attendees.length + ' going';
-        cln.childNodes[1].childNodes[11].innerHTML = 'Created by <strong>'+events[i].createdBy+'</strong>';
-        cln.childNodes[1].childNodes[13].innerHTML = events[i].details;
+        cln.childNodes[1].childNodes[13].innerHTML = 'Created by <strong>'+events[i].createdBy+'</strong>';
+        cln.childNodes[1].childNodes[11].innerHTML = events[i].details;
         if (attendees.includes(currentUser) === true){
             disableBtn( cln.childNodes[1].childNodes[15]);
         } else{
@@ -47,9 +47,20 @@ function displayEvents(events){
 // Search functionality
 function search() {
     var data = getFormData('searchForm');
-    sendReq("POST", 'http://localhost:8000/search', data);
     document.getElementById('home').setAttribute('style', 'display:none');
     document.getElementById('searchResults').removeAttribute('style');
+    document.getElementById('searchLoading').removeAttribute('style');
+    document.getElementById('heading').innerHTML = "Search results for "+'"'+data.key+'"';
+    document.getElementById('results').innerHTML = "";
+    for (i=0; i < Events.length; i++){
+        var current = Events[i][data.criteria].toLowerCase();
+        data.key = data.key.toLowerCase();
+        if (current.includes(data.key) === true){
+            var match = document.getElementById(Events[i]._id).cloneNode(true);
+            document.getElementById('results').appendChild(match);
+        }
+    }
+    document.getElementById('searchLoading').setAttribute('style', 'display:none');
     event.preventDefault();
 }
 
@@ -97,7 +108,7 @@ function updateAttend(element){
         sendReq("PUT", 'http://localhost:8000/event', Events[element.value]);
         var count = element.parentElement.childNodes[9];
         count.innerHTML = parseInt(count.innerHTML[0])+1+' going';
-        disableAttending();
+        disableBtn(element);
     }
 }
 
@@ -148,8 +159,7 @@ function getFormData(formID){
     // get form data
     var form = document.getElementById(formID);
     var elements = form.getElementsByClassName('form-control');
-    var data = {}
-    data.from = formID;
+    var data = {};
     for (i=0; i < elements.length; i++){
         data[elements[i].name] = elements[i].value;
     }
