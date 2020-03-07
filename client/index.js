@@ -1,6 +1,7 @@
 // index.js
 var currentUser = null;
 var Events;
+
 // validate date
 document.getElementById('dateInp').min = new Date().toISOString().split("T")[0];
 
@@ -21,6 +22,9 @@ async function getEvents(){
 getEvents();
 
 function displayEvents(events){
+    var temp = document.getElementById('home').firstElementChild;
+    document.getElementById('home').innerHTML = '';
+    document.getElementById('home').appendChild(temp);
     document.getElementById('loading').setAttribute('style', 'display: none');
     for(i=0; i < events.length; i++){
         var cln = document.getElementById('templateCard').cloneNode(true);
@@ -40,17 +44,27 @@ function displayEvents(events){
             cln.childNodes[1].childNodes[15].setAttribute("value", i);
             cln.childNodes[1].childNodes[15].setAttribute("onclick", "updateAttend(this)");
         }
+        cln.childNodes[1].childNodes[17].setAttribute("value", i);
         document.getElementById("home").appendChild(cln);
     }   
 }
 
 // Search functionality
-function search() {
-    var data = getFormData('searchForm');
+function search(type) {
+    if (type === undefined){
+        var data = getFormData('searchForm');
+        document.getElementById('heading').innerHTML = "Search results for "+'"'+data.key+'"';
+    }
+    else{
+        var data = {
+            criteria: 'createdBy',
+            key: currentUser
+        }
+        document.getElementById('heading').innerHTML = "Your events";
+    }
     document.getElementById('home').setAttribute('style', 'display:none');
     document.getElementById('searchResults').removeAttribute('style');
     document.getElementById('searchLoading').removeAttribute('style');
-    document.getElementById('heading').innerHTML = "Search results for "+'"'+data.key+'"';
     document.getElementById('results').innerHTML = "";
     var results = 0;
     for (i=0; i < Events.length; i++){
@@ -79,6 +93,7 @@ function back(){
 function signup(){
     var data = getFormData('login');
     sendReq("POST", 'http://localhost:8000/newUser',data);
+    $('#loginForm').modal('toggle');
     event.preventDefault();
 }
 
@@ -89,10 +104,7 @@ function submitEvent(){
         var data = getFormData('createEvent');
         data.createdBy = currentUser;
         sendReq("POST",'http://localhost:8000/newEvent', data);
-        var temp = document.getElementById('home').firstElementChild;
-        console.log( document.getElementById('home'));
-        document.getElementById('home').innerHTML = '';
-        document.getElementById('home').appendChild(temp);
+        back()
         getEvents();
     }
     event.preventDefault();
@@ -102,6 +114,7 @@ function auth(){
     // authenticate
     var data = getFormData('login');
     sendReq("POST",'http://localhost:8000/auth', data);
+    $('#loginForm').modal('toggle');
     event.preventDefault();  
 }
 
@@ -129,7 +142,7 @@ function disableAttending(){
 }
 
 function disableBtn(btn){
-    btn.setAttribute('class', 'btn btn-success btn-sm float-right');
+    btn.setAttribute('class', 'btn btn-success btn-sm');
     btn.innerHTML = "Attending";
     btn.disabled = true;
 }
@@ -145,20 +158,32 @@ function sendReq(type ,url, data){
                 currentUser = data.uName;
                 displayUName();
             }
-            displayAlert(req.responseText);
+        displayAlert(req.responseText);
         }
     }
 }
 
-// multi purpose functions
 function displayUName(){
-    var text = document.getElementById('navUName')
+    var text = document.getElementById('navUName');
+    var logoutBtn = document.getElementById('logoutBtn');
     if (currentUser != null){
-        document.getElementById('loginBtn').setAttribute('style',"display:none");
-        text.setAttribute('style', 'color: white')
+        document.getElementById('loginBtn').setAttribute('style', 'display:none');
+        document.getElementById('myEvents').removeAttribute('style');
+        logoutBtn.removeAttribute('style');
+        logoutBtn.setAttribute('onclick', 'logout()');
+        text.removeAttribute('style');
         text.innerHTML = 'Logged in as '+currentUser
     }
     disableAttending();
+}
+
+function logout(){
+    document.getElementById('navUName').innerHTML = '';
+    document.getElementById('myEvents').setAttribute('style', 'display:none');
+    document.getElementById('logoutBtn').setAttribute('style', 'display:none');
+    document.getElementById('loginBtn').removeAttribute('style');
+    currentUser = null;
+    getEvents();
 }
 
 function getFormData(formID){
@@ -188,4 +213,14 @@ function displayAlert(msg){
     card.innerHTML = msg;
     card.appendChild(close);
     card.removeAttribute("style")
+}
+
+function showAttendees(ele){
+    $('#attendees').modal('toggle');
+    var modal = document.getElementById("attendeesBody");
+    var list = Events[ele.value].attending.split(',');
+    modal.innerHTML = '';
+    for (i=0; i < list.length; i++){
+        modal.innerHTML += (i+1)+")  "+list[i]+"<br>"
+    }
 }

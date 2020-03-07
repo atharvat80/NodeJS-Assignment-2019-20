@@ -13,12 +13,20 @@ app.use(bodyParser.json());
 require('./database/db')
 
 // GET requests
-app.get('/', (req, resp)=>{resp.sendFile('client/index.html')}) // Send home page
-app.get('/events', eventController.listAllEvents) // Send all events
-app.put('/event', eventController.updateEvent)
+// Send home page
+app.get('/', async function (req, resp){
+    resp.sendFile('client/index.html');
+})
+// Send all events
+app.get('/events', async function(req, resp){
+    eventController.listAllEvents(req, resp);
+}) 
+app.put('/event', async function(req, resp){
+    eventController.updateEvent(req, resp);
+})
 
 // POST requests
-app.post('/auth', (req, resp)=>{
+app.post('/auth', async function(req, resp){
     var result = auth.login(req);
     if (result === true){
         resp.send("Welcome back "+req.body.uName+"!")
@@ -28,7 +36,7 @@ app.post('/auth', (req, resp)=>{
     } 
 })
 
-app.post('/newUser', (req, resp)=>{
+app.post('/newUser', async function(req, resp){
     result = auth.newUser(req);
     if (result === true){
         resp.send("Welcome "+req.body.uName+" your account has been created!")
@@ -37,7 +45,9 @@ app.post('/newUser', (req, resp)=>{
     }
 })
 
-app.post('/newEvent', eventController.createNewEvent);
+app.post('/newEvent', async function(req, resp){
+    eventController.createNewEvent(req, resp);
+});
 
 // listen for requests
 app.listen(8000);
