@@ -43,10 +43,5 @@ app.post('/newEvent', function(req, res){
     eventController.createNewEvent(req, res);
 });
 
-// Find events
-app.post('/search', async function(req,res){
-    eventController.findEvents(req, res);
-});
-
 // listen for requests
 app.listen(8000);

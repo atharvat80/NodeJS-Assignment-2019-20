@@ -54,12 +54,3 @@ exports.updateEvent = (req, res) =>{
     updateDb();
     res.send("Your attendance has been recorded.")
 }
-
-exports.findEvents = (req, res) =>{
-    // var match = new Array;
-    // for(i=0; i < Object.keys(events).length; i++){
-    //     if (events[i].req.body){
-
-    //     }
-    // }
-}
