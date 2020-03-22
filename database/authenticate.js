@@ -1,8 +1,8 @@
 var users = require('./users.json');
 
 const login = (req, res) => {
-    if (users[req.body.uName] != undefined && req.body.pass === users[req.body.uName]){
-        res.send("Welcome back "+req.body.uName+"!")
+    if (users[req.body.username] != undefined && req.body.password === users[req.body.username]){
+        res.send("Welcome back "+req.body.username+"!")
     }
     else{
         res.send("Invalid username or password.")
@@ -10,8 +10,8 @@ const login = (req, res) => {
 }
 
 const newUser = (req, res) =>{
-    if (users[req.body.uName] === undefined){
-        users[req.body.uName] = req.body.pass;
+    if (users[req.body.username] === undefined){
+        users[req.body.username] = req.body.password;
         var json = JSON.stringify(users);
         var fs = require('fs');
         fs.writeFileSync('./database/users.json', json);
