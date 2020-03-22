@@ -1,52 +1,65 @@
-const Event = require("./event");
+
+events = require('./events.json');
+
+function updateDb(){
+    var fs = require('fs');
+    var json = JSON.stringify(events)
+    fs.writeFile("./database/events.json", json, 'utf8', function(err) {
+        if (err) {
+            console.log(err);
+        }
+    });
+}
+
+function sortEvents(){
+    var eventsArray = new Array;
+    for(i=0; i < Object.keys(events).length; i++){
+        eventsArray.push(events[i]);
+    }
+    
+    eventsArray.sort(function(a, b){
+        var keyA = a.date, keyB = b.date;
+        // Compare the 2 dates
+        if (keyA < keyB) return -1;
+        if (keyA > keyB) return 1;
+        return 0;
+    });
+
+    events = {};
+    var today = new Date().toISOString().split("T")[0];
+    var j = 0;
+    for(i=0; i < eventsArray.length; i++){
+        if (eventsArray[i].date >= today){
+            events[j] = eventsArray[i];
+            j += 1;
+        }
+    }
+}
 
 exports.listAllEvents = (req, res) => {
-	var today = new Date().toISOString().split("T")[0];
-	Event.find({date: {$gt: today}}, null, {sort: {date: 1}}, (err, event) => {
-	if (err) {
-		res.status(500).send(err);
-	}
-		res.status(200).json(event);
-	});
-};
+    res.send(events);
+}
 
-exports.createNewEvent = (req, res) => {
-	let newEventInfo = {
-		name: req.body.nameInp,
-		date: req.body.dateInp,
-		time: req.body.timeInp.slice(0,5),
-		location: req.body.locInp,
-		createdBy: req.body.createdBy,
-		details: req.body.detailsInp,
-		attending: req.body.createdBy
-	}
-	let newEvent = new Event(newEventInfo);
-	newEvent.save((err, event) => {
-	if (err) {
-		res.status(500).send(err);
-	}
-	res.status(201).send('Your event has been created!');
-	});
-};
+exports.createNewEvent = (req, res) =>{
+    var id = Object.keys(events).length;
+    events[id] = req.body;
+    events[id].attending = req.body.createdBy;
+    sortEvents();
+    updateDb();
+    res.send("Your event has been created!")
+}
 
-exports.updateEvent = (req, res) => {
-	Event.findByIdAndUpdate(
-		{ _id: req.body._id},
-		{
-			name: req.body.name,
-			date: req.body.date,
-			time: req.body.time,
-			location: req.body.location,
-			createdBy: req.body.createdBy,
-			details: req.body.details,
-			attending: req.body.attending+','+req.body.currentUser,
-		},
-		function(err, result) {
-			if (err) {
-				res.send(err);
-			} else {
-				res.send('Your attendance has been recorded.');
-			}
-		}
-	);
-};
+exports.updateEvent = (req, res) =>{
+    events[req.body.id].attending += ","+req.body.currentUser;
+    updateDb();
+    res.send("Your attendance has been recorded.")
+}
+
+exports.findEvents = (req, res) =>{
+    // var match = new Array;
+    // for(i=0; i < Object.keys(events).length; i++){
+    //     if (events[i].req.body){
+
+    //     }
+    // }
+}

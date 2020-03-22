@@ -1,115 +1,9 @@
 // index.js
 var currentUser = null;
 var Events;
+var Count;
 
-// validate date
-document.getElementById('dateInp').min = new Date().toISOString().split("T")[0];
-
-// Fetch and display events
-async function getEvents(){
-    document.getElementById('loading').removeAttribute('style');
-    try{
-        let res = await fetch('http://localhost:8000/events');
-        let json = await res.json();
-        if (res.ok == false) throw ('Error 404');
-        Events = json;
-        displayEvents(json);
-	} catch(e) {
-		displayAlert(e)
-	}
-}
-
-getEvents();
-
-function displayEvents(events){
-    var temp = document.getElementById('home').firstElementChild;
-    document.getElementById('home').innerHTML = '';
-    document.getElementById('home').appendChild(temp);
-    document.getElementById('loading').setAttribute('style', 'display: none');
-    for(i=0; i < events.length; i++){
-        var cln = document.getElementById('templateCard').cloneNode(true);
-        var attendees = events[i].attending.split(',');
-        cln.setAttribute('style', 'margin-top: 24px');
-        cln.setAttribute('id', events[i]._id);
-        cln.childNodes[1].childNodes[1].innerHTML = events[i].name;
-        cln.childNodes[1].childNodes[3].innerHTML = events[i].date;
-        cln.childNodes[1].childNodes[5].innerHTML = events[i].time;
-        cln.childNodes[1].childNodes[7].innerHTML = events[i].location;
-        cln.childNodes[1].childNodes[9].innerHTML = attendees.length + ' going';
-        cln.childNodes[1].childNodes[13].innerHTML = 'Created by '+events[i].createdBy;
-        cln.childNodes[1].childNodes[11].innerHTML = events[i].details;
-        if (attendees.includes(currentUser) === true){
-            disableBtn( cln.childNodes[1].childNodes[15]);
-        } else{
-            cln.childNodes[1].childNodes[15].setAttribute("value", i);
-            cln.childNodes[1].childNodes[15].setAttribute("onclick", "updateAttend(this)");
-        }
-        cln.childNodes[1].childNodes[17].setAttribute("value", i);
-        document.getElementById("home").appendChild(cln);
-    }   
-}
-
-// Search functionality
-function search(type) {
-    if (type === undefined){
-        var data = getFormData('searchForm');
-        document.getElementById('heading').innerHTML = "Search results for "+'"'+data.key+'"';
-    }
-    else{
-        var data = {
-            criteria: 'createdBy',
-            key: currentUser
-        }
-        document.getElementById('heading').innerHTML = "Your events";
-    }
-    document.getElementById('home').setAttribute('style', 'display:none');
-    document.getElementById('searchResults').removeAttribute('style');
-    document.getElementById('searchLoading').removeAttribute('style');
-    document.getElementById('results').innerHTML = "";
-    var results = 0;
-    for (i=0; i < Events.length; i++){
-        var current = Events[i][data.criteria].toLowerCase();
-        data.key = data.key.toLowerCase();
-        if (current.includes(data.key) === true){
-            results += 1;
-            var match = document.getElementById(Events[i]._id).cloneNode(true);
-            document.getElementById('results').appendChild(match);
-        }
-    }
-    document.getElementById('searchLoading').setAttribute('style', 'display:none');
-    if (results === 0){
-        document.getElementById('noResult').removeAttribute('style');
-    }
-    event.preventDefault();
-}
-
-function back(){
-    document.getElementById('searchResults').setAttribute('style', 'display:none');
-    document.getElementById('noResult').setAttribute('style', 'display:none');
-    document.getElementById('home').removeAttribute('style')
-}
-
-// POST requests
-function signup(){
-    var data = getFormData('login');
-    sendReq("POST", 'http://localhost:8000/newUser',data);
-    $('#loginForm').modal('toggle');
-    event.preventDefault();
-}
-
-function submitEvent(){
-    if (currentUser === null){
-        displayAlert('Please login or create a new account to create a new event')
-    } else {
-        var data = getFormData('createEvent');
-        data.createdBy = currentUser;
-        sendReq("POST",'http://localhost:8000/newEvent', data);
-        back()
-        getEvents();
-    }
-    event.preventDefault();
-}
-
+// User related functions ----------------------------------------------------------------------------------
 function auth(){
     // authenticate
     var data = getFormData('login');
@@ -118,48 +12,25 @@ function auth(){
     event.preventDefault();  
 }
 
+// 
+function signup(){
+    var data = getFormData('login');
+    sendReq("POST", 'http://localhost:8000/newUser',data);
+    $('#loginForm').modal('toggle');
+    event.preventDefault();
+}
+
 // update attendance
 function updateAttend(element){
     if (currentUser === null){
         displayAlert("Please sign in or create a new account to confirm your attendance.")
     } else{
-        Events[element.value].currentUser = currentUser;
-        sendReq("PUT", 'http://localhost:8000/event', Events[element.value]);
-        var count = element.parentElement.childNodes[9];
-        count.innerHTML = parseInt(count.innerHTML[0])+1+' going';
+        data = {id: element.value, currentUser: currentUser};
+        sendReq("PUT", 'http://localhost:8000/event', data);
+        var count = element.parentElement.childNodes[3].childNodes[7];
+        count.innerHTML = parseInt(count.innerHTML[0])+1;
         disableBtn(element);
-    }
-}
-
-function disableAttending(){
-    for (i=0; i < Events.length; i++){
-        var userList = Events[i].attending.split(',');
-        if (userList.includes(currentUser) === true){
-            var eventCard = document.getElementById(Events[i]._id).childNodes[1].childNodes[15];
-            disableBtn(eventCard);
-        }
-    }
-}
-
-function disableBtn(btn){
-    btn.setAttribute('class', 'btn btn-success btn-sm');
-    btn.innerHTML = "Attending";
-    btn.disabled = true;
-}
-
-function sendReq(type ,url, data){
-    var req = new XMLHttpRequest();
-    req.open(type, url, true);
-    req.setRequestHeader("Content-Type", "application/json")
-    req.send(JSON.stringify(data));
-    req.onreadystatechange = function(){
-        if (req.readyState == 4 && req.status == 200){
-            if (req.responseText.includes('Welcome') === true){
-                currentUser = data.uName;
-                displayUName();
-            }
-        displayAlert(req.responseText);
-        }
+        getEvents();
     }
 }
 
@@ -184,6 +55,137 @@ function logout(){
     document.getElementById('loginBtn').removeAttribute('style');
     currentUser = null;
     getEvents();
+}
+
+// Events related functions ----------------------------------------------------------------------------------
+
+// Fetch and display events
+async function getEvents(){
+    document.getElementById('loading').removeAttribute('style');
+    try{
+        let res = await fetch('http://localhost:8000/events');
+        let json = await res.json();
+        if (res.ok == false) throw ('Error 404');
+        Events = json;
+        Count = Object.keys(Events).length;
+        displayEvents(Events);
+	} catch(e) {
+        document.getElementById('loading').setAttribute('style', 'display: none');
+		displayAlert(e);
+	}
+}
+
+getEvents();
+
+function displayEvents(events){
+    var temp = document.getElementById('home').firstElementChild;
+    document.getElementById('home').innerHTML = '';
+    document.getElementById('home').appendChild(temp);
+    document.getElementById('loading').setAttribute('style', 'display: none');
+    
+    for(i=0; i < Count; i++){
+        // clone the template card
+        var cln = document.getElementById('templateCard').cloneNode(true);
+        var details = cln.childNodes[1].childNodes[3];
+        cln.setAttribute('style', 'margin-top: 24px');
+        cln.setAttribute('id', i);
+
+        // add the event details to the cloned card
+        cln.childNodes[1].childNodes[1].innerHTML = events[i].name;
+        details.childNodes[3].innerHTML = events[i].date;
+        details.childNodes[7].innerHTML = events[i].time;
+        details.childNodes[11].innerHTML = events[i].location;
+        details.childNodes[19].innerHTML = events[i].attending.split(',').length;
+        details.childNodes[23].innerHTML = events[i].createdBy;
+        if (events[i].details != ''){
+            details.childNodes[15].innerHTML = events[i].details;
+        }
+        
+        // disable the signup button if the user is already attending
+        if (events[i].attending.split(',').includes(currentUser) === true){
+            disableBtn( cln.childNodes[1].childNodes[5]);
+        } else{
+            cln.childNodes[1].childNodes[5].setAttribute("value", i);
+            cln.childNodes[1].childNodes[5].setAttribute("onclick", "updateAttend(this)");
+        }
+        cln.childNodes[1].childNodes[7].setAttribute("value", i);
+        document.getElementById("home").appendChild(cln);
+    }   
+}
+
+function submitEvent(){
+    if (currentUser === null){
+        displayAlert('Please login or create a new account to create a new event')
+    } else {
+        var data = getFormData('createEvent');
+        data.createdBy = currentUser;
+        sendReq("POST",'http://localhost:8000/newEvent', data);
+        back()
+        getEvents();
+    }
+    event.preventDefault();
+}
+
+// website related functions ----------------------------------------------------------------------------------
+
+// validate date while creating 
+document.getElementById('dateInp').min = new Date().toISOString().split("T")[0];
+
+function back(){
+    document.getElementById('searchResults').setAttribute('style', 'display:none');
+    document.getElementById('noResult').setAttribute('style', 'display:none');
+    document.getElementById('home').removeAttribute('style')
+}
+
+// Search functionality
+function search(type) {
+    if (type === undefined){
+        var data = getFormData('searchForm');
+        document.getElementById('heading').innerHTML = "Search results for "+'"'+data.key+'"';
+    }
+    else{
+        var data = {
+            criteria: 'createdBy',
+            key: currentUser
+        }
+        document.getElementById('heading').innerHTML = "Your events";
+    }
+    document.getElementById('home').setAttribute('style', 'display:none');
+    document.getElementById('searchResults').removeAttribute('style');
+    document.getElementById('searchLoading').removeAttribute('style');
+    document.getElementById('results').innerHTML = "";
+    
+    var results = 0;
+    for (i=0; i < Count; i++){
+        var current = Events[i][data.criteria].toLowerCase();
+        data.key = data.key.toLowerCase();
+        if (current.includes(data.key) === true){
+            results += 1;
+            var match = document.getElementById(i).cloneNode(true);
+            document.getElementById('results').appendChild(match);
+        }
+    }
+    document.getElementById('searchLoading').setAttribute('style', 'display:none');
+    if (results === 0){
+        document.getElementById('noResult').removeAttribute('style');
+    }
+    event.preventDefault();
+}
+
+function disableAttending(){
+    for (i=0; i < Count; i++){
+        var userList = Events[i].attending.split(',');
+        if (userList.includes(currentUser) === true){
+            var eventCard = document.getElementById(i).childNodes[1].childNodes[5];
+            disableBtn(eventCard);
+        }
+    }
+}
+
+function disableBtn(btn){
+    btn.setAttribute('class', 'btn btn-success btn-sm');
+    btn.innerHTML = "Attending";
+    btn.disabled = true;
 }
 
 function getFormData(formID){
@@ -222,5 +224,26 @@ function showAttendees(ele){
     modal.innerHTML = '';
     for (i=0; i < list.length; i++){
         modal.innerHTML += (i+1)+")  "+list[i]+"<br>"
+    }
+}
+
+// server related functions ----------------------------------------------------------------------------------
+function sendReq(type ,url, data){
+    var req = new XMLHttpRequest();
+    req.open(type, url, true);
+    req.setRequestHeader("Content-Type", "application/json")
+    req.send(JSON.stringify(data));
+    req.onreadystatechange = function(){
+        if (req.readyState == 4 && req.status == 200){
+            if (req.responseText.includes('Welcome') === true){
+                currentUser = data.uName;
+                displayUName();
+            }
+        } else if (req.readyState == 4 && req.status == 0){
+           displayAlert("We couldn't process your request due to trouble reaching our server") 
+        }
+        else{
+            displayAlert(req.responseText);
+        }
     }
 }

@@ -33,7 +33,7 @@
 				<li class="nav-item">
 					<a  class="nav-link" id="navUName" style='visibility: hidden'></a>
 				</li>
-				<li class="nav-item">
+				<li class="nav-item active">
 					<a  class="nav-link" id="myEvents" href="javascript:search('user')" style='visibility: hidden'>My events</a>
 				</li>
 				<li class="nav-item active">
@@ -50,7 +50,7 @@
 	<!-- Modal -->
 	<div class="modal fade" id="loginForm" tabindex="-1" role="dialog" aria-labelledby="loginFormLabel" aria-hidden="true">
 		<div class="modal-dialog" role="document">
-			<div class="modal-content modal-sm">
+			<div class="modal-content">
 				<div class="modal-body" id='loginFormBody'>
 					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 						<span aria-hidden="true">&times;</span>
@@ -58,15 +58,20 @@
 					<form class='px-2 py-2' id='login' onsubmit="auth()">
 						<div class="form-group">
 							<label >Username</label>
-							<input type="text" class="form-control" name="uName" placeholder="Username">
+							<input type="text" class="form-control" name="uName" placeholder="Username" required>
 						</div>
 						<div class="form-group">
 							<label>Password</label>
-							<input type="password" class="form-control" name="pass" placeholder="Password">
+							<input type="password" class="form-control" name="pass" placeholder="Password" required>
 						</div>
 						<button type="submit" class="btn btn-danger">Login</button>
 						<button onclick="signup()" class="btn btn-outline-danger">Sign up</button>
 					</form>
+				</div>
+				<div class="modal-footer">
+					<p style="font-size: smaller;">
+					<strong>Your connection to the server is not encrypted and therefore it is strongly advised that do not use a real password and any other personally identifiable information.</strong> 
+					'test' and 'admin' are two pre-existing users (same password as the username) that can be used for testing. 
 				</div>
 			</div>
 		</div>
@@ -102,14 +107,27 @@
 			<div id="home">
 				<div id='templateCard' class="card shadowCard" style="display: none;">
 					<div class="card-body">
-						<h5 class="card-title" style="font-weight: bold;"></h5>
-						<span class="badge badge-primary"></span>
-						<span class="badge badge-primary"></span>
-						<span class="badge badge-primary"></span>
-						<span class="badge badge-primary"></span>
-						<p class="card-text" style='margin-top: 5px;'></p>
-						<p class="card-text text-muted btn-group float-right" style='font-size: small; margin-top: 10px'></p>
-						<button type="button" class="btn btn-warning btn-sm">I'll be there!</button>
+						<h5 class="card-title text-primary" style="font-weight: bold;"></h5>
+						<dl class="row">
+							<dt class="col-sm-3 text-secondary">Date</dt>
+							<dd class="col-sm-9"></dd>
+						  
+							<dt class="col-sm-3 text-secondary">Time</dt>
+							<dd class="col-sm-9"></dd>
+						  
+							<dt class="col-sm-3 text-secondary">Location</dt>
+							<dd class="col-sm-9"></dd>
+						  
+							<dt class="col-sm-3 text-secondary">Details</dt>
+							<dd class="col-sm-9">None provided</dd>
+			
+							<dt class="col-sm-3 text-secondary">Attending</dt>
+							<dd class="col-sm-9"></dd>
+			
+							<dt class="col-sm-3 text-secondary">Created by</dt>
+							<dd class="col-sm-9"></dd>
+						</dl>
+						<button type="button" class="btn btn-warning btn-sm" onclick="updateAttendance(this)">I'll be there!</button>
 						<button type="button" class="btn btn-info btn-sm" onclick="showAttendees(this)">Guestlist</button>
 					</div>
 				</div>
@@ -160,25 +178,25 @@
 				<div class="card-body">
 					<form onsubmit="submitEvent()" id="createEvent">
 						<div class="form-group">
-							<label for="nameInp">Name</label>
-							<input name="nameInp" type="text" class="form-control" placeholder='Event Name' required>
+							<label>Name</label>
+							<input name="name" type="text" class="form-control" placeholder='Event Name' required>
 						</div>
 						<div class="form-group">
-							<label for="dateInp">Date</label>
-							<input id='dateInp' name="dateInp" type="date" class="form-control" required>     
+							<label>Date</label>
+							<input id='dateInp' name="date" type="date" class="form-control" required>     
 						</div>
 						<div class="form-group">
-							<label for="timeInp">Time</label>
-							<input name="timeInp" type="time" class="form-control" required> 
+							<label>Time</label>
+							<input name="time" type="time" class="form-control" required> 
 							<small class="form-text text-muted">Please use 24HR format unless prompted by your browser</small>    
 						</div>
 						<div class="form-group">
-							<label for="locInp">Location</label>
-							<input name="locInp" type="text" class="form-control" placeholder='Location' required>
+							<label>Location</label>
+							<input name="location" type="text" class="form-control" placeholder='Location' required>
 						</div>
 						<div class="form-group">
-							<label for="detailsInp">Details</label>
-							<textarea name="detailsInp" class="form-control" rows="3" placeholder="e.g. highlights, dress code, entry fees..."></textarea>
+							<label>Details</label>
+							<textarea name="details" class="form-control" rows="3" placeholder="e.g. highlights, dress code, entry fees..."></textarea>
 						</div>
 						<div class="form-check" style="margin-bottom: 10px;">
 							<input type="checkbox" class="form-check-input" id="exampleCheck1" required>
