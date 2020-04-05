@@ -11,3 +11,7 @@
 .badge{
   font-size: 80% !important;
 }
+
+body{
+  padding-top: 60px;
+}

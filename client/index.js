@@ -82,7 +82,7 @@ function displayEvents (events) {
     for (var i = 0; i < Count; i++) {
         // clone the template card
         var cln = document.getElementById('templateCard').cloneNode(true);
-        var details = cln.childNodes[1].childNodes[3];
+        var details = cln.childNodes[1].childNodes[5];
         cln.setAttribute('style', 'margin-top: 24px');
         cln.setAttribute('id', i);
         console.log(cln, details);
