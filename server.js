@@ -4,42 +4,40 @@ const auth = require('./database/authenticate');
 const eventController = require('./database/eventController');
 const app = express();
 
-
 app.use(express.static('client'));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
-
 // GET requests---------------------------------------------------------
 // Send home page
-app.get('/', async function (req, res){
+app.get('/', async function (req, res) {
     res.sendFile('client/index.html');
-})
+});
 
 // Send all events
-app.get('/events', async function(req, res){
+app.get('/events', async function (req, res) {
     eventController.listAllEvents(req, res);
-}) 
+});
 
 // PUT requests ---------------------------------------------------------
 // updating an event
-app.put('/event', function(req, res){
+app.put('/event', function (req, res) {
     eventController.updateEvent(req, res);
-})
+});
 
 // POST requests---------------------------------------------------------
 // Authenticate user
-app.post('/auth', function(req, res){
+app.post('/auth', function (req, res) {
     auth.login(req, res);
 });
 
 // Create new user
-app.post('/newUser', function(req, res){
+app.post('/newUser', function (req, res) {
     auth.newUser(req, res);
-})
+});
 
 // Create new event
-app.post('/newEvent', function(req, res){
+app.post('/newEvent', function (req, res) {
     eventController.createNewEvent(req, res);
 });
 
