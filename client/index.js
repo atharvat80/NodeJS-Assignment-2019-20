@@ -1,3 +1,5 @@
+/* eslint-disable no-undef */
+/* eslint-disable no-unused-vars */
 // index.js
 var currentUser = null;
 var Events;
@@ -21,14 +23,12 @@ function signup () {
 }
 
 // update attendance
-function updateAttend (element) {
+function updateAttendance (element) {
     if (currentUser === null) {
         displayAlert('Please sign in or create a new account to confirm your attendance.');
     } else {
         var data = { id: element.value, currentUser: currentUser };
         sendReq('PUT', 'http://localhost:8000/event', data);
-        var count = element.parentElement.childNodes[3].childNodes[7];
-        count.innerHTML = parseInt(count.innerHTML[0]) + 1;
         disableBtn(element);
         getEvents();
     }
@@ -61,14 +61,15 @@ async function getEvents () {
     try {
         const res = await fetch('http://localhost:8000/events');
         const json = await res.json();
-        if (res.ok == false) throw ('Error 404');
+        // eslint-disable-next-line no-throw-literal
+        if (res.ok === false) throw ('Error 404');
         Events = json;
         Count = Object.keys(Events).length;
         displayEvents(Events);
-	} catch (e) {
-        document.getElementById('loading').setAttribute('style', 'display: none');
-		displayAlert(e);
-	}
+    } catch (e) {
+    document.getElementById('loading').setAttribute('style', 'display: none');
+    displayAlert(e);
+    }
 }
 
 getEvents();
@@ -85,7 +86,6 @@ function displayEvents (events) {
         var details = cln.childNodes[1].childNodes[5];
         cln.setAttribute('style', 'margin-top: 24px');
         cln.setAttribute('id', i);
-        console.log(cln, details);
 
         // add the event details to the cloned card
         cln.childNodes[1].childNodes[1].innerHTML += events[i].name;
@@ -98,12 +98,14 @@ function displayEvents (events) {
 
         // disable the signup button if the user is already attending
         if (events[i].attending.split(',').includes(currentUser) === true) {
-            disableBtn(cln.childNodes[1].childNodes[5]);
+            disableBtn(cln.childNodes[1].childNodes[7]);
         } else {
-            cln.childNodes[1].childNodes[5].setAttribute('value', i);
-            cln.childNodes[1].childNodes[5].setAttribute('onclick', 'updateAttend(this)');
+            cln.childNodes[1].childNodes[7].setAttribute('value', i);
+            cln.childNodes[1].childNodes[7].setAttribute('onclick', 'updateAttendance(this)');
         }
-        cln.childNodes[1].childNodes[7].setAttribute('value', i);
+        cln.childNodes[1].childNodes[9].setAttribute('value', i);
+
+        // Add the card to the home div
         document.getElementById('home').appendChild(cln);
     }
 }
@@ -138,6 +140,7 @@ function search (type) {
         var data = getFormData('searchForm');
         document.getElementById('heading').innerHTML = 'Search results for ' + '"' + data.key + '"';
     } else {
+        // eslint-disable-next-line no-redeclare
         var data = {
             criteria: 'createdBy',
             key: currentUser
@@ -145,6 +148,7 @@ function search (type) {
         document.getElementById('heading').innerHTML = 'Your events';
     }
     document.getElementById('home').setAttribute('style', 'display:none');
+    document.getElementById('noResult').setAttribute('style', 'display:none');
     document.getElementById('searchResults').removeAttribute('style');
     document.getElementById('searchLoading').removeAttribute('style');
     document.getElementById('results').innerHTML = '';
@@ -170,7 +174,7 @@ function disableAttending () {
     for (var i = 0; i < Count; i++) {
         var userList = Events[i].attending.split(',');
         if (userList.includes(currentUser) === true) {
-            var eventCard = document.getElementById(i).childNodes[1].childNodes[5];
+            var eventCard = document.getElementById(i).childNodes[1].childNodes[7];
             disableBtn(eventCard);
         }
     }
@@ -204,6 +208,7 @@ function closeAlert () {
 }
 
 function displayAlert (msg) {
+    $('html, body').animate({ scrollTop: 0 }, 'fast');
     var card = document.getElementById('showMsg');
     var close = document.getElementById('closeAlert');
     card.innerHTML = msg;

@@ -16,7 +16,7 @@
 </head>
 
 <!-- Navigation -->
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
 	<div class="container">
 		<a class="navbar-brand" style="color: white;">
 			<img src="./media/logo.svg" alt="" height="30" width="27"/>
@@ -92,7 +92,9 @@
 			</div>
 		</div>
 	</div>
-
+  <!-- /.Login form -->
+  
+  <!-- Guest list modal -->
 	<div class="modal fade" id="attendees" tabindex="-1" role="dialog" aria-labelledby="attendees" aria-hidden="true">
 		<div class="modal-dialog modal-dialog-centered" role="document">
 			<div class="modal-content">
@@ -106,20 +108,24 @@
 			</div>
 		</div>
 	</div>
+  <!-- /. Guest list modal -->
+  <!-- /. Modals -->
 
-	<!-- Page Content -->
 	<div class="container">
 	<div class="row">
 		<!-- Event Entries Column -->
 		<div class="col-md-8" id="content">
+      <!-- Show an alert -->
 			<div id='showMsg' class="alert alert-primary shadowCard" style="display: none;">
 				<button id='closeAlert' class="close" onclick="closeAlert()">×</button>
 			</div>
-			
+      
+      <!-- Loading spinner -->
 			<div id='loading' class="text-center" style="display: none;">
 				<div class="spinner-border m-5" role="status"></div>
 			</div>
-			
+      
+      <!-- Show event cards -->
 			<div id="home">
 				<div id='templateCard' class="card shadowCard" style="display: none;">
 					<div class="card-body">
@@ -176,10 +182,16 @@
 					</div>
 				</div>
 			</div>
-			
+      
+      <!-- Display search results -->
 			<div id="searchResults" style="display: none;">
 				<div>
-					<button class='btn btn-danger btn-sm' style='margin-right:20px' onclick="back()">‹ back</button>
+					<button class='btn btn-light btn-sm' style='margin-right:20px; border-radius: 20px;' onclick="back()">
+						<svg class="bi bi-arrow-left-short" width="1.7em" height="1.7em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+							<path fill-rule="evenodd" d="M7.854 4.646a.5.5 0 010 .708L5.207 8l2.647 2.646a.5.5 0 01-.708.708l-3-3a.5.5 0 010-.708l3-3a.5.5 0 01.708 0z" clip-rule="evenodd"/>
+							<path fill-rule="evenodd" d="M4.5 8a.5.5 0 01.5-.5h6.5a.5.5 0 010 1H5a.5.5 0 01-.5-.5z" clip-rule="evenodd"/>
+						</svg>
+					</button>
 					<h5 class='my-4 d-inline-block align-middle' id="heading">Search results</h5>
 					<div id='searchLoading' class="text-center" style="display: none;">
 						<div class="spinner-border m-5" role="status"></div>
@@ -195,6 +207,7 @@
 
 		<!-- Sidebar Widgets Column -->
 		<div class="col-md-4">
+      <!-- Search widget -->
 			<div class="card shadowCard">
 				<h5 class="card-header">
 					<svg class="bi bi-search" width="1.2em" height="1.2em" viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
@@ -222,7 +235,8 @@
 					</form>
 				</div>
 			</div>
-			
+      
+      <!-- New event form -->
 			<div class="card shadowCard">
 				<h5 class="card-header">
 					<svg class="bi bi-calendar" width="1.2em" height="1.2em" viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
@@ -273,8 +287,7 @@
 	<!-- Footer -->
 	<footer class="py-3 bg-dark">
 		<div class="container">
-			<p class="m-0 text-center text-white">Copyright &copy; Atharva Tidke 2020</p>
-			<p class="m-0 text-center text-white">API documentation</p>
+			<p class="m-0 text-center text-white"><a class="text-white" href="./apidoc/index.html" >API documentation</a></p>
 		</div>
 	</footer>
 

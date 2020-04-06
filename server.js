@@ -10,7 +10,7 @@ app.use(bodyParser.json());
 
 // GET requests---------------------------------------------------------
 // Send home page
-app.get('/', async function (req, res) {
+ app.get('/', async function (req, res) {
     res.sendFile('client/index.html');
 });
 
@@ -32,6 +32,11 @@ app.post('/auth', function (req, res) {
 });
 
 // Create new user
+/**
+ * @api {post} /newUser Create a new user
+ * @apiName User signup
+ * @apiGroup Users
+ */
 app.post('/newUser', function (req, res) {
     auth.newUser(req, res);
 });
@@ -43,3 +48,5 @@ app.post('/newEvent', function (req, res) {
 
 // listen for requests
 app.listen(8000);
+
+// Generate documentation apidoc -e "(node_modules|client)" -o client/apidoc
