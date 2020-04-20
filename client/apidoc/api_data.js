@@ -61,30 +61,22 @@ define({ "api": [
       ]
     },
     "success": {
-      "fields": {
-        "Success 200": [
-          {
-            "group": "Success 200",
-            "type": "text",
-            "optional": false,
-            "field": "Response",
-            "description": "<p>Your event has been created.</p>"
-          }
-        ]
-      }
+      "examples": [
+        {
+          "title": "Response to a valid request",
+          "content": "HTTP/1.1 200 OK\n Your event has been created.",
+          "type": "text"
+        }
+      ]
     },
     "error": {
-      "fields": {
-        "Error 400": [
-          {
-            "group": "Error 400",
-            "type": "text",
-            "optional": false,
-            "field": "Response",
-            "description": "<p>Some event details were not found.</p>"
-          }
-        ]
-      }
+      "examples": [
+        {
+          "title": "Response to a bad request",
+          "content": "HTTP/1.1 400 Bad Request\n Some event details were not found.",
+          "type": "text"
+        }
+      ]
     },
     "version": "0.0.0",
     "filename": "./apidoc.js",
@@ -95,6 +87,7 @@ define({ "api": [
     "url": "/events",
     "title": "Get all events",
     "name": "Get_all_events",
+    "description": "<p>The server sends a JSON object in response to this GET request where the key represents the id of the event and the value contains the event details.</p>",
     "group": "Events",
     "success": {
       "fields": {
@@ -182,19 +175,6 @@ define({ "api": [
     "title": "Get Stephenson college's events homepage",
     "name": "Get_homepage",
     "group": "Events",
-    "success": {
-      "fields": {
-        "Success 200": [
-          {
-            "group": "Success 200",
-            "type": "HTML",
-            "optional": false,
-            "field": "Port-8000",
-            "description": "<p>Returns websites files</p>"
-          }
-        ]
-      }
-    },
     "examples": [
       {
         "title": "Homepage URL",
@@ -240,39 +220,22 @@ define({ "api": [
       ]
     },
     "success": {
-      "fields": {
-        "Success 200": [
-          {
-            "group": "Success 200",
-            "type": "text",
-            "optional": false,
-            "field": "Response",
-            "description": "<p>Your attendance has been recorded.</p>"
-          }
-        ]
-      }
+      "examples": [
+        {
+          "title": "Response to a valid request",
+          "content": "HTTP/1.1 200 OK\n Your attendance has been recorded.",
+          "type": "text"
+        }
+      ]
     },
     "error": {
-      "fields": {
-        "Error 400": [
-          {
-            "group": "Error 400",
-            "type": "text",
-            "optional": false,
-            "field": "Response",
-            "description": "<p>event id and/or current user not defined.</p>"
-          }
-        ],
-        "Error 404": [
-          {
-            "group": "Error 404",
-            "type": "text",
-            "optional": false,
-            "field": "Response",
-            "description": "<p>event not found.</p>"
-          }
-        ]
-      }
+      "examples": [
+        {
+          "title": "Response to a bad request",
+          "content": "// When the request is missing parameters\nHTTP/1.1 400 Bad Request\n event id and/or current user not defined.\n\n// When the event specified is not found\nHTTP/1.1 404 Not Found\n event not found.",
+          "type": "text"
+        }
+      ]
     },
     "version": "0.0.0",
     "filename": "./apidoc.js",
@@ -313,30 +276,22 @@ define({ "api": [
       ]
     },
     "success": {
-      "fields": {
-        "Success 200": [
-          {
-            "group": "Success 200",
-            "type": "text",
-            "optional": false,
-            "field": "Response",
-            "description": "<p>Welcome back [username]!</p>"
-          }
-        ]
-      }
+      "examples": [
+        {
+          "title": "Response to correct credentials",
+          "content": "HTTP/1.1 200 OK\n Welcome back [username]!",
+          "type": "text"
+        }
+      ]
     },
     "error": {
-      "fields": {
-        "Error 401": [
-          {
-            "group": "Error 401",
-            "type": "text",
-            "optional": false,
-            "field": "Response",
-            "description": "<p>Invalid username or password.</p>"
-          }
-        ]
-      }
+      "examples": [
+        {
+          "title": "Response to incorrect credentials",
+          "content": "HTTP/1.1 401 Unauthorized\n Invalid username or password.",
+          "type": "text"
+        }
+      ]
     },
     "version": "0.0.0",
     "filename": "./apidoc.js",
@@ -377,30 +332,22 @@ define({ "api": [
       ]
     },
     "success": {
-      "fields": {
-        "Success 200": [
-          {
-            "group": "Success 200",
-            "type": "text",
-            "optional": false,
-            "field": "Response",
-            "description": "<p>Welcome [username] your account has been created!</p>"
-          }
-        ]
-      }
+      "examples": [
+        {
+          "title": "Successful Signup",
+          "content": "HTTP/1.1 200 OK\n Welcome [username] your account has been created!",
+          "type": "text"
+        }
+      ]
     },
     "error": {
-      "fields": {
-        "Error 401": [
-          {
-            "group": "Error 401",
-            "type": "text",
-            "optional": false,
-            "field": "Response",
-            "description": "<p>That username is already in use.</p>"
-          }
-        ]
-      }
+      "examples": [
+        {
+          "title": "Unsuccessful signup",
+          "content": "HTTP/1.1 401 Unauthorized\n That username is already in use.",
+          "type": "text"
+        }
+      ]
     },
     "version": "0.0.0",
     "filename": "./apidoc.js",

@@ -3,7 +3,6 @@
  * @api {get} / Get Stephenson college's events homepage
  * @apiName Get homepage
  * @apiGroup Events
- * @apiSuccess {HTML} Port-8000 Returns websites files
  * @apiExample Homepage URL
  *  http://localhost:8000/
 */
@@ -12,6 +11,7 @@
 /**
  * @api {get} /events Get all events
  * @apiName Get all events
+ * @apiDescription The server sends a JSON object in response to this GET request where the key represents the id of the event and the value contains the event details.
  * @apiGroup Events
  * @apiSuccess {Object} Events List of events
  * @apiSuccess {String} Object[key] Event id
@@ -58,9 +58,17 @@
  *      "id":"4",
  *      "currentUser":"test"
  * }
- * @apiSuccess {text} Response Your attendance has been recorded.
- * @apiError (Error 400) {text} Response event id and/or current user not defined.
- * @apiError (Error 404) {text} Response event not found.
+ * @apiSuccessExample {text} Response to a valid request
+ * HTTP/1.1 200 OK
+ *  Your attendance has been recorded.
+ * @apiErrorExample {text} Response to a bad request
+ * // When the request is missing parameters
+ * HTTP/1.1 400 Bad Request
+ *  event id and/or current user not defined.
+ *
+ * // When the event specified is not found
+ * HTTP/1.1 404 Not Found
+ *  event not found.
 */
 
 // Authenticate user
@@ -76,8 +84,12 @@
  *      "username": "test",
  *      "password": "test"
  * }
- * @apiSuccess {text} Response Welcome back [username]!
- * @apiError (Error 401) {text} Response Invalid username or password.
+ * @apiSuccessExample {text} Response to correct credentials
+ * HTTP/1.1 200 OK
+ *  Welcome back [username]!
+ * @apiErrorExample {text} Response to incorrect credentials
+ * HTTP/1.1 401 Unauthorized
+ *  Invalid username or password.
 */
 
 // Create new user
@@ -93,8 +105,12 @@
  *      "username": "test",
  *      "password": "test"
  * }
- * @apiSuccess {text} Response Welcome [username] your account has been created!
- * @apiError (Error 401) {text} Response That username is already in use.
+ * @apiSuccessExample {text} Successful Signup
+ * HTTP/1.1 200 OK
+ *  Welcome [username] your account has been created!
+ * @apiErrorExample {text} Unsuccessful signup
+ * HTTP/1.1 401 Unauthorized
+ *  That username is already in use.
 */
 
 // Create new event
@@ -118,6 +134,10 @@
  *      "createdBy": username,
  *      "attending": "username1,username2,..."
  * }
- * @apiSuccess {text} Response Your event has been created.
- * @apiError (Error 400) {text} Response Some event details were not found.
+ * @apiSuccessExample {text} Response to a valid request
+ * HTTP/1.1 200 OK
+ *  Your event has been created.
+ * @apiErrorExample {text} Response to a bad request
+ * HTTP/1.1 400 Bad Request
+ *  Some event details were not found.
 */

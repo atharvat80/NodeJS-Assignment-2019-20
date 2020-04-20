@@ -1,0 +1,1 @@
+Please visit http://localhost:8000/apidoc/index.html for documentation

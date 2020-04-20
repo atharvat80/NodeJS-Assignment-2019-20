@@ -1,0 +1,8 @@
+{
+    "name": "stevo_events",
+    "version": "0.0.0",
+    "description": "Stephenson College Events API is organised around REST. It accepts GET and form-encoded PUT and POST requests.<br><br>Base URL <code>http://localhost:8000</code>",
+    "template": {
+        "forceLanguage": "en"
+    }
+}

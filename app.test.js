@@ -86,7 +86,7 @@ describe('Testing event services', () => {
             .expect('Content-Type', 'text/html; charset=utf-8')
             .expect(404)
             .then(response =>
-                assert(response.body, 'event id and/or current user not defined.')
+                assert(response.body, 'event not found.')
             );
     });
 
