@@ -5,8 +5,13 @@
     ```
 2. Start the server
     ```
-    > node server.js
+    > npm start 
     ```
+    or 
+    ```
+    node server.js
+    ```
+
 3. Visit http://localhost:8000/
 
 # Documentation
