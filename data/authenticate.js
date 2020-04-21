@@ -16,7 +16,7 @@ const newUser = (req, res) => {
         users[req.body.username] = req.body.password;
         var json = JSON.stringify(users);
         var fs = require('fs');
-        fs.writeFileSync('./database/users.json', json);
+        fs.writeFileSync('./data/users.json', json);
         res.send('Welcome ' + req.body.username + ' your account has been created!');
     } else {
         res.status(401).send('That username is already in use.');

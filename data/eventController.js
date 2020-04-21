@@ -4,7 +4,7 @@ var events = require('./events.json');
 function updateDb () {
     var fs = require('fs');
     var json = JSON.stringify(events);
-    fs.writeFile('./database/events.json', json, 'utf8', function (err) {
+    fs.writeFile('./data/events.json', json, 'utf8', function (err) {
         if (err) {
             console.log(err);
         }
