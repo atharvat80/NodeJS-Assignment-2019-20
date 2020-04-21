@@ -4,6 +4,7 @@
   "description": "Stephenson college events",
   "main": "server.js",
   "scripts": {
+    "pretest": "eslint .",
     "test": "jest",
     "start": "nodemon server.js"
   },
