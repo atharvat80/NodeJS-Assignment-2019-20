@@ -1,4 +1,4 @@
-
+// Retrieve all events from events.json
 var events = require('./events.json');
 
 function updateDb () {
@@ -11,6 +11,7 @@ function updateDb () {
     });
 }
 
+// Sort events by date in ascending order and delete the ones that have expired.
 function sortEvents () {
     var eventsArray = [];
     for (var i = 0; i < Object.keys(events).length; i++) {
@@ -36,10 +37,12 @@ function sortEvents () {
     }
 }
 
+// Send all events
 exports.listAllEvents = (req, res) => {
     res.send(events);
 };
 
+// Update events.json when a new event is created
 exports.createNewEvent = (req, res) => {
     var id = Object.keys(events).length;
     var expectedKeys = ['name', 'date', 'time', 'location', 'details', 'createdBy'];
@@ -55,6 +58,7 @@ exports.createNewEvent = (req, res) => {
     }
 };
 
+// Add a user to an events guestlist
 exports.updateEvent = (req, res) => {
     if (req.body.id !== undefined && req.body.currentUser !== undefined) {
         if (events[req.body.id] === undefined) {

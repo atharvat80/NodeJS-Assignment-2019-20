@@ -1,5 +1,7 @@
+// Retrieve existing users from users.json
 var users = require('./users.json');
 
+// Handle login event
 const login = (req, res) => {
     if (users[req.body.username] !== undefined && req.body.password === users[req.body.username]) {
         res.send('Welcome back ' + req.body.username + '!');
@@ -8,6 +10,7 @@ const login = (req, res) => {
     }
 };
 
+// Handle a user signup
 const newUser = (req, res) => {
     if (users[req.body.username] === undefined) {
         users[req.body.username] = req.body.password;

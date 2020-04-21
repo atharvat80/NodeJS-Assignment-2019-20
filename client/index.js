@@ -6,15 +6,14 @@ var Events;
 var Count;
 
 // User related functions ----------------------------------------------------------------------------------
+// authenticate
 function auth () {
-    // authenticate
     var data = getFormData('login');
     sendReq('POST', 'http://localhost:8000/auth', data);
     $('#loginForm').modal('toggle');
     event.preventDefault();
 }
 
-//
 function signup () {
     var data = getFormData('login');
     sendReq('POST', 'http://localhost:8000/newUser', data);
@@ -50,6 +49,7 @@ function logout () {
     document.getElementById('logoutBtn').setAttribute('style', 'display:none');
     document.getElementById('loginBtn').removeAttribute('style');
     currentUser = null;
+    back();
     getEvents();
 }
 
@@ -84,7 +84,7 @@ function displayEvents (events) {
         // clone the template card
         var cln = document.getElementById('templateCard').cloneNode(true);
         var details = cln.childNodes[1].childNodes[5];
-        cln.setAttribute('style', 'margin-top: 24px');
+        cln.removeAttribute('style');
         cln.setAttribute('id', i);
 
         // add the event details to the cloned card

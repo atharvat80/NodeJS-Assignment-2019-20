@@ -1,7 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const auth = require('./database/authenticate');
-const eventController = require('./database/eventController');
+const auth = require('./data/authenticate');
+const eventController = require('./data/eventController');
 const app = express();
 
 app.use(express.static('client'));
