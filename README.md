@@ -1,15 +1,11 @@
 # Initialise server
-1. Download necessary packages
+1. Download necessary packages 
     ```
     > npm install
     ```
 2. Start the server
     ```
     > npm start 
-    ```
-    or 
-    ```
-    node server.js
     ```
 
 3. Visit http://localhost:8000/

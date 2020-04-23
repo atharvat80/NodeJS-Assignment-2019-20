@@ -48,16 +48,11 @@ exports.createNewEvent = (req, res) => {
     var expectedKeys = ['name', 'date', 'time', 'location', 'details', 'createdBy'];
     var reqKeys = Object.keys(req.body);
     if (JSON.stringify(reqKeys) === JSON.stringify(expectedKeys)) {
-        // Ignore if test event
-        if (req.body.name === 'Event') {
-            res.send('Your event has been created!');
-        } else {
-            events[id] = req.body;
-            events[id].attending = req.body.createdBy;
-            sortEvents();
-            updateDb();
-            res.send('Your event has been created!');
-        }
+        events[id] = req.body;
+        events[id].attending = req.body.createdBy;
+        sortEvents();
+        updateDb();
+        res.send('Your event has been created!');
     } else {
         res.status(400).send('Some event details were not found.');
     }
