@@ -48,11 +48,16 @@ exports.createNewEvent = (req, res) => {
     var expectedKeys = ['name', 'date', 'time', 'location', 'details', 'createdBy'];
     var reqKeys = Object.keys(req.body);
     if (JSON.stringify(reqKeys) === JSON.stringify(expectedKeys)) {
-        events[id] = req.body;
-        events[id].attending = req.body.createdBy;
-        sortEvents();
-        updateDb();
-        res.send('Your event has been created!');
+        // Ignore if test event
+        if (req.body.name === 'Event') {
+            res.send('Your event has been created!');
+        } else {
+            events[id] = req.body;
+            events[id].attending = req.body.createdBy;
+            sortEvents();
+            updateDb();
+            res.send('Your event has been created!');
+        }
     } else {
         res.status(400).send('Some event details were not found.');
     }
@@ -64,8 +69,11 @@ exports.updateEvent = (req, res) => {
         if (events[req.body.id] === undefined) {
             res.status(404).send('event not found.');
         } else {
-            events[req.body.id].attending += ',' + req.body.currentUser;
-            updateDb();
+            var currentList = events[req.body.id].attending;
+            if (currentList.includes(req.body.currentUser) === false) {
+                events[req.body.id].attending += ',' + req.body.currentUser;
+                updateDb();
+            }
             res.send('Your attendance has been recorded.');
         }
     } else {

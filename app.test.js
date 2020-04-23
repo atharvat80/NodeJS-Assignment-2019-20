@@ -140,8 +140,8 @@ describe('Testing user services', () => {
     test('POST /newUser attempt a successful signup', () => {
         // If the test fails it is because the username and password already exits in ./database/users.json
         const params = {
-            username: 'test5',
-            password: 'test5'
+            username: 'jest_test',
+            password: 'jest_test'
         };
 
         return request(app)
@@ -150,7 +150,7 @@ describe('Testing user services', () => {
             .expect('Content-Type', 'text/html; charset=utf-8')
             .expect(200)
             .then(response =>
-                assert(response.body, 'Welcome test5 your account has been created!')
+                assert(response.body, 'Welcome jest_test your account has been created!')
             );
     });
 
