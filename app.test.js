@@ -4,6 +4,7 @@ const request = require('supertest');
 var assert = require('assert');
 
 describe('Testing event services', () => {
+    // Get events homepage
     test('GET /  Get events homepage', () => {
         return request(app)
             .get('/')
@@ -11,6 +12,7 @@ describe('Testing event services', () => {
             .expect(200);
     });
 
+    // Get all events
     test('GET /events Get events as a json', () => {
         return request(app)
             .get('/events')
@@ -19,6 +21,7 @@ describe('Testing event services', () => {
             .expect(200);
     });
 
+    // Create a new event
     test('POST /newEvent Should create a new event', () => {
         const params = {
             name: 'Event',
@@ -39,6 +42,7 @@ describe('Testing event services', () => {
             );
     });
 
+    // Try to create a new event with some attributes missing
     test('POST /newEvent Should not create a new event', () => {
         // Some attributes of the event have been left out so it shouldn't create a new event
         const params = {
@@ -58,6 +62,7 @@ describe('Testing event services', () => {
             );
     });
 
+    // Add a user to an event's guestlist
     test('PUT /event add user to a valid event', () => {
         const params = {
             id: 4,
@@ -74,6 +79,7 @@ describe('Testing event services', () => {
             );
     });
 
+    // Try adding a user to the guestlist of an event that doesn't exist
     test('PUT /event Add user to an event that does not exist', () => {
         const params = {
             id: 100000,
@@ -90,6 +96,7 @@ describe('Testing event services', () => {
             );
     });
 
+    // Test the above request with no parameters
     test('PUT /event Send a bad request (request has no body)', () => {
         const params = {};
 
@@ -105,6 +112,7 @@ describe('Testing event services', () => {
 });
 
 describe('Testing user services', () => {
+    // Try logging in with correct credentials
     test('POST /auth attempt a successful login', () => {
         const params = {
             username: 'test',
@@ -121,6 +129,7 @@ describe('Testing user services', () => {
             );
     });
 
+    // Try logging in with incorrect credentials
     test('POST /auth attempt a unsuccessful login', () => {
         const params = {
             username: 'test',
@@ -137,6 +146,7 @@ describe('Testing user services', () => {
             );
     });
 
+    // Try creating a new account
     test('POST /newUser attempt a successful signup', () => {
         // If the test fails it is because the username and password already exits in ./database/users.json
         const params = {
@@ -154,6 +164,7 @@ describe('Testing user services', () => {
             );
     });
 
+    // Try creating an account with a username that is already taken
     test('POST /newUser attempt a unsuccessful signup', () => {
         const params = {
             username: 'test',
