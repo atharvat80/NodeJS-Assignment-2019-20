@@ -6,7 +6,7 @@ var Events;
 var Count;
 
 // User related functions ----------------------------------------------------------------------------------
-// authenticate
+// login functionality
 function auth () {
     var data = getFormData('login');
     sendReq('POST', 'http://localhost:8000/auth', data);
@@ -14,6 +14,7 @@ function auth () {
     event.preventDefault();
 }
 
+// Create new account
 function signup () {
     var data = getFormData('login');
     sendReq('POST', 'http://localhost:8000/newUser', data);
@@ -21,7 +22,7 @@ function signup () {
     event.preventDefault();
 }
 
-// update attendance
+// Add current user to an event's guest list
 function updateAttendance (element) {
     if (currentUser === null) {
         displayAlert('Please sign in or create a new account to confirm your attendance.');
@@ -33,6 +34,7 @@ function updateAttendance (element) {
     }
 }
 
+// Update navbar with account controls
 function displayUName () {
     var logoutBtn = document.getElementById('logoutBtn');
     if (currentUser != null) {
@@ -55,7 +57,7 @@ function logout () {
 
 // Events related functions ----------------------------------------------------------------------------------
 
-// Fetch and display events
+// Fetch events
 async function getEvents () {
     document.getElementById('loading').removeAttribute('style');
     try {
@@ -74,6 +76,7 @@ async function getEvents () {
 
 getEvents();
 
+// Display fetched events
 function displayEvents (events) {
     var temp = document.getElementById('home').firstElementChild;
     document.getElementById('home').innerHTML = '';
@@ -110,6 +113,7 @@ function displayEvents (events) {
     }
 }
 
+// Create a new event
 function submitEvent () {
     if (currentUser === null) {
         displayAlert('Please login or create a new account to create a new event');
@@ -128,6 +132,7 @@ function submitEvent () {
 // validate date while creating
 document.getElementById('dateInp').min = new Date().toISOString().split('T')[0];
 
+// Back button functionality to go to home screen
 function back () {
     document.getElementById('searchResults').setAttribute('style', 'display:none');
     document.getElementById('noResult').setAttribute('style', 'display:none');
@@ -170,6 +175,7 @@ function search (type) {
     event.preventDefault();
 }
 
+// Disable the attending button if the user is already attending
 function disableAttending () {
     for (var i = 0; i < Count; i++) {
         var userList = Events[i].attending.split(',');
@@ -180,12 +186,14 @@ function disableAttending () {
     }
 }
 
+// Disable specified button
 function disableBtn (btn) {
     btn.setAttribute('class', 'btn btn-success btn-sm');
     btn.innerHTML = '<span>&#10003;</span> Attending';
     btn.disabled = true;
 }
 
+// Extract from data as JSON
 function getFormData (formID) {
     // get form data
     var form = document.getElementById(formID);
@@ -198,6 +206,7 @@ function getFormData (formID) {
     return data;
 }
 
+// Hide the alert after it has been closed
 function closeAlert () {
     var card = document.getElementById('showMsg');
     var close = document.getElementById('closeAlert');
@@ -207,6 +216,7 @@ function closeAlert () {
     card.setAttribute('style', 'display:none');
 }
 
+// Display alert
 function displayAlert (msg) {
     $('html, body').animate({ scrollTop: 0 }, 'fast');
     var card = document.getElementById('showMsg');
@@ -216,6 +226,7 @@ function displayAlert (msg) {
     card.removeAttribute('style');
 }
 
+// Show the users attending an event
 function showAttendees (ele) {
     $('#attendees').modal('toggle');
     var modal = document.getElementById('attendeesBody');
@@ -227,6 +238,7 @@ function showAttendees (ele) {
 }
 
 // server related functions ----------------------------------------------------------------------------------
+// Send requests to the server
 function sendReq (type, url, data) {
     var req = new XMLHttpRequest();
     req.open(type, url, true);
